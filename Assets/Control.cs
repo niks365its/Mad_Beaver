@@ -34,6 +34,9 @@ public class Control : MonoBehaviour
     private bool IsStickFly;
     private int groundContacts = 0;
 
+    private float previousY;
+    private float addForce = 0f;
+
     // Start is called before the first frame update
     void Awake()
 
@@ -55,6 +58,8 @@ public class Control : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         animator = GetComponent<Animator>();
+
+        previousY = transform.position.y;
     }
 
 
@@ -76,21 +81,29 @@ public class Control : MonoBehaviour
             //animator.SetBool("IsJump", false);
         }
 
+        // Зчитування поточної позиції по осі Y
+        float currentY = transform.position.y;
 
+        // Перевірка напрямку переміщення
+        if (currentY > previousY)
+        {
+            addForce = 2f;
+        }
+        else if (currentY < previousY)
+        {
+            addForce = -2f;
+        }
+
+        else
+        {
+            addForce = 0f;
+        }
+
+        // Оновлення попередньої позиції
+        previousY = currentY;
 
     }
 
-    // private void FixedUpdate()
-    // {
-    //     if (!isGrounded)
-    //     {
-    //         animator.SetBool("IsJump", true);
-    //     }
-    //     else
-    //     {
-    //         animator.SetBool("IsJump", false);
-    //     }
-    // }
 
     private void OnEnable()
     {
@@ -137,19 +150,12 @@ public class Control : MonoBehaviour
     {
         if (isGrounded) // Only jump if grounded
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            // animator.SetBool("IsJump", true);
+
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce + addForce);
+
+            Debug.Log("Force is: " + rb.velocity);
         }
     }
-
-    // public void OnStopJumping()
-    // {
-
-    //     // animator.SetBool("IsJump", false);
-    //     isJumping = false;
-
-
-    // }
 
     public void stickFly(InputAction.CallbackContext context)
     {
@@ -196,8 +202,7 @@ public class Control : MonoBehaviour
             {
                 isGrounded = true;
                 animator.SetBool("IsJump", false);
-                Debug.Log("Grounded");
-                Debug.Log("Is Not Jumping");
+
             }
         }
     }
@@ -211,8 +216,7 @@ public class Control : MonoBehaviour
             {
                 isGrounded = false;
                 animator.SetBool("IsJump", true);
-                Debug.Log("Not Grounded");
-                Debug.Log("Is Jumping");
+
             }
         }
     }
