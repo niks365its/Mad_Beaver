@@ -55,6 +55,15 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""AngleJump"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d5e1af0-a9f6-4ff4-8b6f-12fdb8ecbde4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Throw"",
                     ""type"": ""Button"",
                     ""id"": ""81f20c8a-8fb8-4052-bae3-f9114ad9e27b"",
@@ -106,6 +115,17 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1c381441-beea-4843-a8ec-9feb2db19622"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AngleJump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -251,6 +271,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
         m_player_Left = m_player.FindAction("Left", throwIfNotFound: true);
         m_player_Right = m_player.FindAction("Right", throwIfNotFound: true);
         m_player_Jump = m_player.FindAction("Jump", throwIfNotFound: true);
+        m_player_AngleJump = m_player.FindAction("AngleJump", throwIfNotFound: true);
         m_player_Throw = m_player.FindAction("Throw", throwIfNotFound: true);
         // menu
         m_menu = asset.FindActionMap("menu", throwIfNotFound: true);
@@ -322,6 +343,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
     private readonly InputAction m_player_Left;
     private readonly InputAction m_player_Right;
     private readonly InputAction m_player_Jump;
+    private readonly InputAction m_player_AngleJump;
     private readonly InputAction m_player_Throw;
     public struct PlayerActions
     {
@@ -330,6 +352,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
         public InputAction @Left => m_Wrapper.m_player_Left;
         public InputAction @Right => m_Wrapper.m_player_Right;
         public InputAction @Jump => m_Wrapper.m_player_Jump;
+        public InputAction @AngleJump => m_Wrapper.m_player_AngleJump;
         public InputAction @Throw => m_Wrapper.m_player_Throw;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
@@ -349,6 +372,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @AngleJump.started += instance.OnAngleJump;
+            @AngleJump.performed += instance.OnAngleJump;
+            @AngleJump.canceled += instance.OnAngleJump;
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
@@ -365,6 +391,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @AngleJump.started -= instance.OnAngleJump;
+            @AngleJump.performed -= instance.OnAngleJump;
+            @AngleJump.canceled -= instance.OnAngleJump;
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
@@ -460,6 +489,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
         void OnLeft(InputAction.CallbackContext context);
         void OnRight(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnAngleJump(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
     }
     public interface IMenuActions

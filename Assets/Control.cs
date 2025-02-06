@@ -37,6 +37,9 @@ public class Control : MonoBehaviour
     private float previousY;
     private float addForce = 0f;
 
+    private float lastThrowTime = 0f;
+    private float throwCooldown = 0.5f; // Час між кидками
+
     // Start is called before the first frame update
     void Awake()
 
@@ -48,6 +51,7 @@ public class Control : MonoBehaviour
         input.player.Right.performed += moveRight;
         input.player.Right.canceled += stopRight;
         input.player.Jump.performed += onJump;
+        input.player.AngleJump.performed += onAngleJump;
         input.player.Throw.performed += stickFly;
         input.player.Throw.canceled += stickNoFly;
 
@@ -157,21 +161,37 @@ public class Control : MonoBehaviour
         }
     }
 
+    public void onAngleJump(InputAction.CallbackContext context)
+    {
+        if (isGrounded) // Only jump if grounded
+        {
+            float direction = transform.localScale.x > 0 ? 1f : -1f;
+            rb.velocity = new Vector2(jumpForce * 0.5f * direction, jumpForce + addForce);
+
+            Debug.Log("Force is: " + rb.velocity);
+        }
+    }
+
+
+
     public void stickFly(InputAction.CallbackContext context)
     {
+        if (Time.time - lastThrowTime < throwCooldown)
+            return; // Якщо ще не минуло 0.5 секунди, виходимо
+
+        lastThrowTime = Time.time; // Оновлюємо час останнього кидка
         animator.SetBool("IsThrow", true);
-        // Створюємо камінчик у точці кидка
+
+        // Створюємо stick у точці кидка
         GameObject stick = Instantiate(stickPrefab, throwPoint.position, throwPoint.rotation);
         Rigidbody2D rb = stick.GetComponent<Rigidbody2D>();
 
         if (rb != null)
         {
             // Визначаємо напрямок кидка залежно від напряму персонажа
-            float direction = transform.localScale.x > 0 ? 1f : -1f; // Напрямок: 1 - вправо, -1 - вліво
-            rb.velocity = new Vector2(throwForce * direction, 0); // Кидок по горизонталі
+            float direction = transform.localScale.x > 0 ? 1f : -1f;
+            rb.velocity = new Vector2(throwForce * direction, 0);
         }
-        //Destroy(stick, 5f); // Знищення через 5 секунд
-        // animator.SetBool("IsThrow", false);
     }
 
     public void stickNoFly(InputAction.CallbackContext context)

@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "AngleJump",
+                    "type": "Button",
+                    "id": "5d5e1af0-a9f6-4ff4-8b6f-12fdb8ecbde4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Throw",
                     "type": "Button",
                     "id": "81f20c8a-8fb8-4052-bae3-f9114ad9e27b",
@@ -84,6 +93,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c381441-beea-4843-a8ec-9feb2db19622",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AngleJump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
