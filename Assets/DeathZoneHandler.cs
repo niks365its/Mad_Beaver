@@ -14,7 +14,7 @@ public class DeathZoneHandler : MonoBehaviour
             {
                 //  player.TriggerGameOver(); // Виклик анімації програшу
 
-                //GetComponent<Control>().enabled = false; // Зупиняємо рух або інші дії персонажа
+                player.enabled = false; // Зупиняємо рух або інші дії персонажа
                 healthBar.ZeroHealth();
 
 

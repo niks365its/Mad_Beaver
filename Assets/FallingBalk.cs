@@ -14,7 +14,7 @@ public class FallingBalk : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) // Перевіряємо, чи зіткнулась балка з гравцем
         {
-            Invoke("EnableGravity", 3f); // Запускаємо затримку перед увімкненням гравітації
+            Invoke("EnableGravity", 2f); // Запускаємо затримку перед увімкненням гравітації
         }
     }
 

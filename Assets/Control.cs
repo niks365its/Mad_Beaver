@@ -14,7 +14,7 @@ public class Control : MonoBehaviour
 
     private bool isMoveLeft = false;
     private bool isMoveRight = false;
-    private bool isJumping;
+    //private bool isJumping;
     private bool isGrounded = false;
 
     public Animator animator;
@@ -31,14 +31,14 @@ public class Control : MonoBehaviour
     public GameObject stickPrefab; // Префаб камінчика
     public Transform throwPoint;  // Точка, з якої кидатиметься камінчик
     public float throwForce = 10f; // Сила кидка
-    private bool IsStickFly;
+                                   //  private bool IsStickFly;
     private int groundContacts = 0;
 
     private float previousY;
     private float addForce = 0f;
 
     private float lastThrowTime = 0f;
-    private float throwCooldown = 0.5f; // Час між кидками
+    private float throwCooldown = 0.3f; // Час між кидками
 
     // Start is called before the first frame update
     void Awake()
@@ -54,6 +54,7 @@ public class Control : MonoBehaviour
         input.player.AngleJump.performed += onAngleJump;
         input.player.Throw.performed += stickFly;
         input.player.Throw.canceled += stickNoFly;
+
 
     }
 
@@ -257,6 +258,7 @@ public class Control : MonoBehaviour
             StartCoroutine(GameOverMenu());
         }
     }
+
 
 
     public IEnumerator GameOverMenu()

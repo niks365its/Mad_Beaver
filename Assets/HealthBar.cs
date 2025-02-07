@@ -46,12 +46,14 @@ public class HealthBar : MonoBehaviour
         if (life > 1)
         {
             StartCoroutine(HandleGameOver());
+            player.enabled = false;
         }
 
         else
         {
 
             Die(); // Виклик логіки смерті
+
         }
         Debug.Log("healthSlider" + currentHealth);
     }
