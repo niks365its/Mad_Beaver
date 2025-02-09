@@ -21,6 +21,7 @@ public class HunterControl : MonoBehaviour
     void Start()
     {
         target = pointA;
+        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Hunter"), LayerMask.NameToLayer("Player"), true);
     }
 
     void Update()

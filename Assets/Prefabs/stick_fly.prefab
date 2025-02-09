@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8661824833874747369}
   - component: {fileID: 3695997772261416950}
   - component: {fileID: -4041148654427121940}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: stick_fly
   m_TagString: Untagged
   m_Icon: {fileID: 0}

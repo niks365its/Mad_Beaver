@@ -10,7 +10,7 @@ public class FlyStickControl : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, 5f); // Знищення через 5 секунд
+        Destroy(gameObject, 4f); // Знищення через 5 секунд
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -28,7 +28,7 @@ public class FlyStickControl : MonoBehaviour
 
 
 
-        if (collision.gameObject.CompareTag("Enemy")) // Якщо це ворог
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("TreesTrap")) // Якщо це ворог
         {
             EnemyHealthBar enemyHealth = collision.gameObject.GetComponent<EnemyHealthBar>();
             if (enemyHealth != null)

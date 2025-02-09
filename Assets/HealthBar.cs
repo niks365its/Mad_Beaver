@@ -67,14 +67,6 @@ public class HealthBar : MonoBehaviour
         RestartLevel(); // Перезапускаємо рівень
     }
 
-    void SomeMethod()
-    {
-        if (life > 1)
-        {
-            StartCoroutine(HandleGameOver()); // Запускаємо корутину
-        }
-    }
-
 
     public void TakeDamage(float damage)
     {

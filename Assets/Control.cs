@@ -212,10 +212,24 @@ public class Control : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Sharp"))
+        {
+            Debug.Log("Game Over Trigger Set");
+            animator.SetBool("IsJump", false);
+            animator.SetTrigger("GameOverTrigger");
+            Debug.Log("Is Sharp collision");
+            Debug.Log("Game Over Trigger Set");
 
+
+        }
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+
+
         if (collision.gameObject.CompareTag("Ground"))
         {
             groundContacts++;
@@ -230,6 +244,8 @@ public class Control : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
+
+
         if (collision.gameObject.CompareTag("Ground"))
         {
             groundContacts--;
@@ -240,6 +256,8 @@ public class Control : MonoBehaviour
 
             }
         }
+
+
     }
 
     public void TriggerGameOver()

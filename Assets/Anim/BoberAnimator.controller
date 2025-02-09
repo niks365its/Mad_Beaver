@@ -271,6 +271,7 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2633976399172093170}
+  - {fileID: 8286987397053119017}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -436,10 +437,10 @@ AnimatorStateMachine:
     m_Position: {x: 540, y: -60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3355626340766779657}
-    m_Position: {x: 20, y: 80, z: 0}
+    m_Position: {x: -100, y: -90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6971473639069980447}
-    m_Position: {x: -110, y: -50, z: 0}
+    m_Position: {x: 10, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -5537242407290674990}
@@ -480,6 +481,31 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1101 &8286987397053119017
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: GameOverTrigger
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -3355626340766779657}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0
+  m_TransitionOffset: 0
+  m_ExitTime: 0.7
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!1101 &8714879786163582343
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
