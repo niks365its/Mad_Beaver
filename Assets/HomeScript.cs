@@ -6,6 +6,8 @@ public class HomeScript : MonoBehaviour
 {
     public GameObject levelCompleted;
     public GameObject Player;
+    public GameObject home;
+    public GameObject playerBar;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -14,8 +16,10 @@ public class HomeScript : MonoBehaviour
             Control player = collision.GetComponent<Control>();
             if (player != null)
             {
+                home.SetActive(false);
                 levelCompleted.SetActive(true);
                 Player.SetActive(false);
+                playerBar.SetActive(false);
 
 
             }

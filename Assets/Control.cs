@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
 
 public class Control : MonoBehaviour
 
@@ -33,6 +33,7 @@ public class Control : MonoBehaviour
     public float throwForce = 10f; // Сила кидка
                                    //  private bool IsStickFly;
     private int groundContacts = 0;
+    public Text firewoodText;
 
     private float previousY;
     private float addForce = 0f;
@@ -177,22 +178,30 @@ public class Control : MonoBehaviour
 
     public void stickFly(InputAction.CallbackContext context)
     {
-        if (Time.time - lastThrowTime < throwCooldown)
-            return; // Якщо ще не минуло 0.5 секунди, виходимо
-
-        lastThrowTime = Time.time; // Оновлюємо час останнього кидка
         animator.SetBool("IsThrow", true);
-
-        // Створюємо stick у точці кидка
-        GameObject stick = Instantiate(stickPrefab, throwPoint.position, throwPoint.rotation);
-        Rigidbody2D rb = stick.GetComponent<Rigidbody2D>();
-
-        if (rb != null)
+        if (GlobalResources.Firewood > 0)
         {
-            // Визначаємо напрямок кидка залежно від напряму персонажа
-            float direction = transform.localScale.x > 0 ? 1f : -1f;
-            rb.velocity = new Vector2(throwForce * direction, 0);
+            GlobalResources.Firewood -= 1;
+            firewoodText.text = "" + GlobalResources.Firewood;
+            if (Time.time - lastThrowTime < throwCooldown)
+                return; // Якщо ще не минуло 0.5 секунди, виходимо
+
+            lastThrowTime = Time.time; // Оновлюємо час останнього кидка
+            // animator.SetBool("IsThrow", true);
+
+            // Створюємо stick у точці кидка
+            GameObject stick = Instantiate(stickPrefab, throwPoint.position, throwPoint.rotation);
+            Rigidbody2D rb = stick.GetComponent<Rigidbody2D>();
+
+            if (rb != null)
+            {
+                // Визначаємо напрямок кидка залежно від напряму персонажа
+                float direction = transform.localScale.x > 0 ? 1f : -1f;
+                rb.velocity = new Vector2(throwForce * direction, 0);
+            }
         }
+        else
+            firewoodText.text = "X";
     }
 
     public void stickNoFly(InputAction.CallbackContext context)

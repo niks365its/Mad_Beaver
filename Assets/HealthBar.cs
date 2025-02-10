@@ -65,6 +65,7 @@ public class HealthBar : MonoBehaviour
         life--; // Зменшуємо кількість життя
         UpdateLifeText(); // Оновлюємо текст життя
         RestartLevel(); // Перезапускаємо рівень
+        GlobalResources.Firewood = 0;
     }
 
 
@@ -102,10 +103,12 @@ public class HealthBar : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
+        GlobalResources.Firewood = 0;
 
         if (player != null)
         {
             player.TriggerGameOver(); // Виклик логіки програшу
         }
+
     }
 }
