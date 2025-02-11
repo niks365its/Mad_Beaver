@@ -5,15 +5,20 @@ public class DeathZoneHandler : MonoBehaviour
 
     public HealthBar healthBar;
 
+    public AudioSource audioSource;
+    public AudioClip fallingSound;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player")) // Перевірка, чи це персонаж
         {
+
             Control player = collision.GetComponent<Control>();
             if (player != null)
             {
                 //  player.TriggerGameOver(); // Виклик анімації програшу
 
+                audioSource.PlayOneShot(fallingSound);
                 player.enabled = false; // Зупиняємо рух або інші дії персонажа
                 healthBar.ZeroHealth();
 

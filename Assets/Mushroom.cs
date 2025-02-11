@@ -6,6 +6,9 @@ public class Mushroom : MonoBehaviour
     public HealthBar healthBar;
     private string mushroomKey;
 
+    public AudioSource audioSource;
+    public AudioClip lifeAddSound;
+
     private void Start()
     {
 
@@ -34,15 +37,15 @@ public class Mushroom : MonoBehaviour
 
                 //GetComponent<Control>().enabled = false; // Зупиняємо рух або інші дії персонажа
                 healthBar.IncreaseLife();
+                // Вимикаємо візуальне відображення об'єкта
+                GetComponent<SpriteRenderer>().enabled = false;
                 PlayerPrefs.SetInt(mushroomKey, 1); // Позначаємо грибок як зібраний
                 PlayerPrefs.Save(); // Зберігаємо стан
-                Destroy(gameObject); // Видаляємо зі сцени грибок
-
+                //Destroy(gameObject); // Видаляємо зі сцени грибок
+                audioSource.PlayOneShot(lifeAddSound);
+                Destroy(gameObject, lifeAddSound.length);
 
             }
         }
     }
-
-
-
 }

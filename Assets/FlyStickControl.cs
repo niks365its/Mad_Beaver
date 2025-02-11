@@ -8,6 +8,9 @@ public class FlyStickControl : MonoBehaviour
     public float onPlayerDamage = 10f; // Кількість пошкоджень
     public float onEnemyDamage = 10f; // Кількість пошкоджень
 
+    public AudioSource audioSource;
+    public AudioClip impactSound;
+
     void Start()
     {
         Destroy(gameObject, 4f); // Знищення через 5 секунд
@@ -23,6 +26,8 @@ public class FlyStickControl : MonoBehaviour
             if (healthBar != null)
             {
                 healthBar.TakeDamage(onPlayerDamage); // Застосувати пошкодження
+                audioSource.PlayOneShot(impactSound);
+                GetComponent<SpriteRenderer>().enabled = false;
             }
         }
 
@@ -34,12 +39,14 @@ public class FlyStickControl : MonoBehaviour
             if (enemyHealth != null)
             {
                 enemyHealth.TakeDamage(onEnemyDamage); // Застосувати пошкодження
+                audioSource.PlayOneShot(impactSound);
+                GetComponent<SpriteRenderer>().enabled = false;
             }
         }
 
 
 
-        Destroy(gameObject); // Знищення після зіткнення
+        Destroy(gameObject, impactSound.length); // Знищення після зіткнення
 
     }
 

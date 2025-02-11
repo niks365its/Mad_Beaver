@@ -8,6 +8,9 @@ public class Firewood : MonoBehaviour
     public Text firewoodText;
     public int addSum = 10;
 
+    public AudioSource audioSource;
+    public AudioClip woodAddSound;
+
     private void Start()
     {
         firewoodText.text = "" + GlobalResources.Firewood;
@@ -19,7 +22,8 @@ public class Firewood : MonoBehaviour
         {
             GlobalResources.Firewood += addSum;
             firewoodText.text = "" + GlobalResources.Firewood;
-            Destroy(gameObject); // Видаляємо об'єкт дров
+            audioSource.PlayOneShot(woodAddSound);
+            Destroy(gameObject, woodAddSound.length);
         }
     }
 }

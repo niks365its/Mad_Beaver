@@ -18,6 +18,9 @@ public class HunterControl : MonoBehaviour
 
     private bool isAttacking = false;
 
+    public AudioSource audioSource;
+    public AudioClip shotSound;
+
     void Start()
     {
         target = pointA;
@@ -65,7 +68,7 @@ public class HunterControl : MonoBehaviour
             {
                 transform.localScale = new Vector3(Mathf.Sign(playerDirection.x), 1, 1);
             }
-
+            audioSource.PlayOneShot(shotSound);
             animator.SetBool("IsHunterAttack", true);
             Attack(other.transform.position);
             cooldownTimer = attackCooldown;

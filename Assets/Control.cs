@@ -9,6 +9,15 @@ using UnityEngine.UI;
 public class Control : MonoBehaviour
 
 {
+    public AudioSource audioSource;
+    public AudioClip jumpSound;
+    public AudioClip walkSound;
+    public AudioClip hitFailSound;
+    public AudioClip hitSound;
+    public AudioClip startSound;
+    public AudioClip sharpHitSound;
+
+
 
     private Input input;
 
@@ -66,6 +75,8 @@ public class Control : MonoBehaviour
         animator = GetComponent<Animator>();
 
         previousY = transform.position.y;
+
+        audioSource.PlayOneShot(startSound);
     }
 
 
@@ -77,6 +88,11 @@ public class Control : MonoBehaviour
             transform.position += Vector3.left * 5 * Time.deltaTime;
             animator.SetBool("IsGo", true);
             //  animator.SetBool("IsJump", false);
+            if (!audioSource.isPlaying && isGrounded)
+            {
+                audioSource.PlayOneShot(walkSound);
+            }
+
         }
 
 
@@ -85,6 +101,10 @@ public class Control : MonoBehaviour
             transform.position += Vector3.right * 5 * Time.deltaTime;
             animator.SetBool("IsGo", true);
             //animator.SetBool("IsJump", false);
+            if (!audioSource.isPlaying && isGrounded)
+            {
+                audioSource.PlayOneShot(walkSound);
+            }
         }
 
         // Зчитування поточної позиції по осі Y
@@ -134,6 +154,7 @@ public class Control : MonoBehaviour
     {
         isMoveLeft = false;
         animator.SetBool("IsGo", false);
+        audioSource.Stop();
     }
 
     private void moveRight(InputAction.CallbackContext context)
@@ -149,6 +170,7 @@ public class Control : MonoBehaviour
     {
         isMoveRight = false;
         animator.SetBool("IsGo", false);
+        audioSource.Stop();
     }
 
 
@@ -158,6 +180,9 @@ public class Control : MonoBehaviour
         {
 
             rb.velocity = new Vector2(rb.velocity.x, jumpForce + addForce);
+
+            audioSource.Stop();
+            audioSource.PlayOneShot(jumpSound);
 
             Debug.Log("Force is: " + rb.velocity);
         }
@@ -169,7 +194,7 @@ public class Control : MonoBehaviour
         {
             float direction = transform.localScale.x > 0 ? 1f : -1f;
             rb.velocity = new Vector2(jumpForce * 0.5f * direction, jumpForce + addForce);
-
+            audioSource.PlayOneShot(jumpSound);
             Debug.Log("Force is: " + rb.velocity);
         }
     }
@@ -183,6 +208,7 @@ public class Control : MonoBehaviour
         {
             GlobalResources.Firewood -= 1;
             firewoodText.text = "" + GlobalResources.Firewood;
+            audioSource.PlayOneShot(hitSound);
             if (Time.time - lastThrowTime < throwCooldown)
                 return; // Якщо ще не минуло 0.5 секунди, виходимо
 
@@ -201,7 +227,10 @@ public class Control : MonoBehaviour
             }
         }
         else
+        {
             firewoodText.text = "X";
+            audioSource.PlayOneShot(hitFailSound);
+        }
     }
 
     public void stickNoFly(InputAction.CallbackContext context)
@@ -225,13 +254,9 @@ public class Control : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Sharp"))
         {
-            Debug.Log("Game Over Trigger Set");
             animator.SetBool("IsJump", false);
             animator.SetTrigger("GameOverTrigger");
-            Debug.Log("Is Sharp collision");
-            Debug.Log("Game Over Trigger Set");
-
-
+            audioSource.PlayOneShot(sharpHitSound);
         }
     }
 
