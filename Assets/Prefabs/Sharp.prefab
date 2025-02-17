@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1249188683375413306}
   - component: {fileID: 8085363631786018808}
   - component: {fileID: 3572333487536693809}
-  - component: {fileID: 7557991543379145632}
+  - component: {fileID: -2599841583704160345}
   m_Layer: 0
-  m_Name: trap1
+  m_Name: Sharp
   m_TagString: Sharp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7557991543379145632
+--- !u!114 &-2599841583704160345
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,6 +140,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5571485026155755789}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b39c0203a3fbed941b5224988c55386d, type: 3}
+  m_Script: {fileID: 11500000, guid: d4d07ff3ba1549741ae1480841aeafe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}

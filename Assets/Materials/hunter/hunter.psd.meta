@@ -126,8 +126,8 @@ TextureImporter:
       name: hunter_0
       rect:
         serializedVersion: 2
-        x: 42
-        y: 504
+        x: 47
+        y: 507
         width: 202
         height: 442
       alignment: 0
@@ -147,9 +147,9 @@ TextureImporter:
       name: hunter_1
       rect:
         serializedVersion: 2
-        x: 370
-        y: 499
-        width: 182
+        x: 373
+        y: 502
+        width: 184
         height: 445
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -168,8 +168,8 @@ TextureImporter:
       name: hunter_2
       rect:
         serializedVersion: 2
-        x: 654
-        y: 504
+        x: 659
+        y: 507
         width: 223
         height: 440
       alignment: 0
@@ -189,9 +189,9 @@ TextureImporter:
       name: hunter_3
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 253
+        x: 4
+        y: 3
+        width: 256
         height: 430
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -210,9 +210,9 @@ TextureImporter:
       name: hunter_4
       rect:
         serializedVersion: 2
-        x: 306
-        y: 0
-        width: 322
+        x: 309
+        y: 3
+        width: 324
         height: 430
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -231,9 +231,9 @@ TextureImporter:
       name: hunter_5
       rect:
         serializedVersion: 2
-        x: 654
-        y: 0
-        width: 364
+        x: 659
+        y: 3
+        width: 357
         height: 430
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -244,6 +244,27 @@ TextureImporter:
       bones: []
       spriteID: 051a6ef967f758b41a414f00fae6e232
       internalID: 735696424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hunter_6
+      rect:
+        serializedVersion: 2
+        x: 1049
+        y: 3
+        width: 364
+        height: 430
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 739436542f90313469e512b1ca8ba44c
+      internalID: -1187632645
       vertices: []
       indices: 
       edges: []
@@ -265,6 +286,7 @@ TextureImporter:
       hunter_3: 2096959056
       hunter_4: -984742013
       hunter_5: 735696424
+      hunter_6: -1187632645
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

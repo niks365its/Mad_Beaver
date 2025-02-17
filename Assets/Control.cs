@@ -9,13 +9,13 @@ using UnityEngine.UI;
 public class Control : MonoBehaviour
 
 {
-    public AudioSource audioSource;
-    public AudioClip jumpSound;
-    public AudioClip walkSound;
-    public AudioClip hitFailSound;
-    public AudioClip hitSound;
-    public AudioClip startSound;
-    public AudioClip sharpHitSound;
+    // public AudioSource audioSource;
+    // public AudioClip jumpSound;
+    // public AudioClip walkSound;
+    // public AudioClip hitFailSound;
+    // public AudioClip hitSound;
+    // public AudioClip startSound;
+    // public AudioClip sharpHitSound;
 
 
 
@@ -65,7 +65,7 @@ public class Control : MonoBehaviour
         input.player.Throw.performed += stickFly;
         input.player.Throw.canceled += stickNoFly;
 
-
+        SoundManager.Instance.StopEffectsSound();
     }
 
     private void Start()
@@ -76,7 +76,12 @@ public class Control : MonoBehaviour
 
         previousY = transform.position.y;
 
-        audioSource.PlayOneShot(startSound);
+        // audioSource.PlayOneShot(startSound);
+
+
+        SoundManager.Instance.PlayBackgroundMusic();
+
+
     }
 
 
@@ -88,9 +93,13 @@ public class Control : MonoBehaviour
             transform.position += Vector3.left * 5 * Time.deltaTime;
             animator.SetBool("IsGo", true);
             //  animator.SetBool("IsJump", false);
-            if (!audioSource.isPlaying && isGrounded)
+            // if (!audioSource.isPlaying && isGrounded)
+            // {
+            //     audioSource.PlayOneShot(walkSound);
+            // }
+            if (isGrounded)
             {
-                audioSource.PlayOneShot(walkSound);
+                SoundManager.Instance.PlayWalkSound();
             }
 
         }
@@ -101,9 +110,13 @@ public class Control : MonoBehaviour
             transform.position += Vector3.right * 5 * Time.deltaTime;
             animator.SetBool("IsGo", true);
             //animator.SetBool("IsJump", false);
-            if (!audioSource.isPlaying && isGrounded)
+            // if (!audioSource.isPlaying && isGrounded)
+            // {
+            //     audioSource.PlayOneShot(walkSound);
+            // }
+            if (isGrounded)
             {
-                audioSource.PlayOneShot(walkSound);
+                SoundManager.Instance.PlayWalkSound();
             }
         }
 
@@ -154,7 +167,8 @@ public class Control : MonoBehaviour
     {
         isMoveLeft = false;
         animator.SetBool("IsGo", false);
-        audioSource.Stop();
+        // audioSource.Stop();
+        SoundManager.Instance.StopWalkSound();
     }
 
     private void moveRight(InputAction.CallbackContext context)
@@ -170,7 +184,8 @@ public class Control : MonoBehaviour
     {
         isMoveRight = false;
         animator.SetBool("IsGo", false);
-        audioSource.Stop();
+        // audioSource.Stop();
+        SoundManager.Instance.StopWalkSound();
     }
 
 
@@ -181,8 +196,15 @@ public class Control : MonoBehaviour
 
             rb.velocity = new Vector2(rb.velocity.x, jumpForce + addForce);
 
-            audioSource.Stop();
-            audioSource.PlayOneShot(jumpSound);
+            // audioSource.Stop();
+            // audioSource.PlayOneShot(jumpSound);
+
+            // Зупиняємо звук кроків перед стрибком
+            SoundManager.Instance.StopWalkSound();
+
+
+            // Відтворюємо звук стрибка
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
 
             Debug.Log("Force is: " + rb.velocity);
         }
@@ -194,7 +216,15 @@ public class Control : MonoBehaviour
         {
             float direction = transform.localScale.x > 0 ? 1f : -1f;
             rb.velocity = new Vector2(jumpForce * 0.5f * direction, jumpForce + addForce);
-            audioSource.PlayOneShot(jumpSound);
+            // audioSource.Stop();
+            // audioSource.PlayOneShot(jumpSound);
+
+            // Зупиняємо звук кроків перед стрибком
+            SoundManager.Instance.StopWalkSound();
+
+            // Відтворюємо звук стрибка
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+
             Debug.Log("Force is: " + rb.velocity);
         }
     }
@@ -206,9 +236,8 @@ public class Control : MonoBehaviour
         animator.SetBool("IsThrow", true);
         if (GlobalResources.Firewood > 0)
         {
-            GlobalResources.Firewood -= 1;
-            firewoodText.text = "" + GlobalResources.Firewood;
-            audioSource.PlayOneShot(hitSound);
+
+            //  audioSource.PlayOneShot(hitSound);
             if (Time.time - lastThrowTime < throwCooldown)
                 return; // Якщо ще не минуло 0.5 секунди, виходимо
 
@@ -224,12 +253,17 @@ public class Control : MonoBehaviour
                 // Визначаємо напрямок кидка залежно від напряму персонажа
                 float direction = transform.localScale.x > 0 ? 1f : -1f;
                 rb.velocity = new Vector2(throwForce * direction, 0);
+
+                GlobalResources.Firewood -= 1;
+                firewoodText.text = "" + GlobalResources.Firewood;
+                SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
             }
         }
         else
         {
             firewoodText.text = "X";
-            audioSource.PlayOneShot(hitFailSound);
+            //  audioSource.PlayOneShot(hitFailSound);
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.emptyStickSound);
         }
     }
 
@@ -250,15 +284,6 @@ public class Control : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Sharp"))
-        {
-            animator.SetBool("IsJump", false);
-            animator.SetTrigger("GameOverTrigger");
-            audioSource.PlayOneShot(sharpHitSound);
-        }
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -287,6 +312,7 @@ public class Control : MonoBehaviour
             {
                 isGrounded = false;
                 animator.SetBool("IsJump", true);
+                SoundManager.Instance.StopWalkSound();
 
             }
         }
@@ -298,8 +324,10 @@ public class Control : MonoBehaviour
     {
         if (!isGameOver)
         {
+            // SoundManager.Instance.StopEffectsSound();
             isGameOver = true;
             animator.SetTrigger("GameOverTrigger");
+            //SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
 
             // Додатково: зупинити рух або інші дії персонажа
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -316,13 +344,22 @@ public class Control : MonoBehaviour
     public IEnumerator GameOverMenu()
     {
         yield return new WaitForSeconds(3f);
+        // Зупиняємо звуки
+        SoundManager.Instance.StopEffectsSound();
+        SoundManager.Instance.StopBackgroundSound();
+
+
+
 
         gameOverMenu.SetActive(true);
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.gameOverSound);
         Player.SetActive(false);
+
     }
 
     public void RestartGame()
     {
+        SoundManager.Instance.StopEffectsSound();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

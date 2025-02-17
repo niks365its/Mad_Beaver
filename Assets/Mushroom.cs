@@ -6,8 +6,10 @@ public class Mushroom : MonoBehaviour
     public HealthBar healthBar;
     private string mushroomKey;
 
-    public AudioSource audioSource;
-    public AudioClip lifeAddSound;
+    private bool hasCollided = false;
+
+    // public AudioSource audioSource;
+    // public AudioClip lifeAddSound;
 
     private void Start()
     {
@@ -28,8 +30,9 @@ public class Mushroom : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")) // Перевірка, чи це персонаж
+        if (collision.CompareTag("Player") && !hasCollided) // Перевірка, чи це персонаж
         {
+            hasCollided = true;
             Control player = collision.GetComponent<Control>();
             if (player != null)
             {
@@ -41,11 +44,14 @@ public class Mushroom : MonoBehaviour
                 GetComponent<SpriteRenderer>().enabled = false;
                 PlayerPrefs.SetInt(mushroomKey, 1); // Позначаємо грибок як зібраний
                 PlayerPrefs.Save(); // Зберігаємо стан
-                //Destroy(gameObject); // Видаляємо зі сцени грибок
-                audioSource.PlayOneShot(lifeAddSound);
-                Destroy(gameObject, lifeAddSound.length);
+                                    //Destroy(gameObject); // Видаляємо зі сцени грибок
+                                    // audioSource.PlayOneShot(lifeAddSound);
+                SoundManager.Instance.PlayOneShot(SoundManager.Instance.mushroomSound);
+                Destroy(gameObject, SoundManager.Instance.mushroomSound.length);
 
             }
         }
     }
+
+
 }

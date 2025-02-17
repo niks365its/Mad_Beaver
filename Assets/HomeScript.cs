@@ -20,6 +20,7 @@ public class HomeScript : MonoBehaviour
                 levelCompleted.SetActive(true);
                 Player.SetActive(false);
                 playerBar.SetActive(false);
+                SoundManager.Instance.PlayOneShot(SoundManager.Instance.fireworkSound);
 
 
             }

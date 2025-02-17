@@ -68,6 +68,12 @@ public class GameMenus : MonoBehaviour
         Player.SetActive(true);
     }
 
+    public void BackToMaim()
+    {
+        LevelMenu.SetActive(false);
+
+    }
+
     public void LevelSelect()
     {
         StartCoroutine(LevelSelectDelay()); // Викликаємо корутину затримки перед закриттям

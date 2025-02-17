@@ -212,10 +212,9 @@ MonoBehaviour:
   speed: 2
   projectile: {fileID: 8562039220202044337, guid: 665eec8108c726e4c8be63931bdeb65d, type: 3}
   firePoint: {fileID: 7344671954175957496}
+  hunter: {fileID: 2767541105831020665}
   attackCooldown: 2
   animator: {fileID: 6983874838009406679}
-  audioSource: {fileID: 8496494828851432605}
-  shotSound: {fileID: 8300000, guid: c8c765df3fbfe6b428b1819970903cfa, type: 3}
 --- !u!95 &6983874838009406679
 Animator:
   serializedVersion: 5

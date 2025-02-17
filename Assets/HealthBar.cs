@@ -43,6 +43,8 @@ public class HealthBar : MonoBehaviour
 
     public void ZeroHealth()
     {
+        animator.SetTrigger("GameOverTrigger");
+
         if (life > 1)
         {
             StartCoroutine(HandleGameOver());
@@ -77,6 +79,11 @@ public class HealthBar : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            animator.SetBool("IsJump", false);
+            animator.SetTrigger("GameOverTrigger");
+
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
+
             ZeroHealth();
 
         }

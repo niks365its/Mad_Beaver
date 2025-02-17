@@ -172,10 +172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0935b1df10805a7418d58a3b8e5b1214, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onPlayerDamage: 20
+  onPlayerDamage: 25
   onEnemyDamage: 10
-  audioSource: {fileID: 5352478449807966719}
-  impactSound: {fileID: 8300000, guid: c1dd6a9d86e17c7459870893e9dab072, type: 3}
 --- !u!82 &5352478449807966719
 AudioSource:
   m_ObjectHideFlags: 0
