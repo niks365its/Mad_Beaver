@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class EnemyHealthBar : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class EnemyHealthBar : MonoBehaviour
     public float maxHealth = 50f; // Максимальне здоров'я ворога
     private float currentHealth;
     private bool isHealthBarVisible = false; // Чи активна смуга
+    public Animator enemyAnimator;
 
     void Start()
     {
@@ -29,8 +31,7 @@ public class EnemyHealthBar : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Die(); // Викликати логіку смерті
-
+            StartCoroutine(DeathAnimation()); // Викликати анімацію смерті
         }
     }
 
@@ -38,13 +39,24 @@ public class EnemyHealthBar : MonoBehaviour
     {
         healthSlider.gameObject.SetActive(true); // Увімкнути слайдер
         isHealthBarVisible = true;
-
     }
 
     private void Die()
     {
+
         Debug.Log("Ворог загинув!");
         Destroy(gameObject); // Видалити ворога зі сцени
         healthSlider.gameObject.SetActive(false);
+    }
+
+    public IEnumerator DeathAnimation()
+    {
+        // yield return new WaitForSeconds(1f);
+        enemyAnimator.SetBool("IsDead", true);
+        yield return new WaitForSeconds(0.3f);
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.sharpSound);
+        yield return new WaitForSeconds(0.5f);
+        enemyAnimator.SetBool("IsDead", false);
+        Die(); // Викликати логіку смерті
     }
 }

@@ -65,11 +65,12 @@ public class Control : MonoBehaviour
         input.player.Throw.performed += stickFly;
         input.player.Throw.canceled += stickNoFly;
 
-        SoundManager.Instance.StopEffectsSound();
+
     }
 
     private void Start()
     {
+        SoundManager.Instance.StopEffectsSound();
         rb = GetComponent<Rigidbody2D>();
 
         animator = GetComponent<Animator>();
@@ -79,7 +80,7 @@ public class Control : MonoBehaviour
         // audioSource.PlayOneShot(startSound);
 
 
-        SoundManager.Instance.PlayBackgroundMusic();
+        SoundManager.Instance.PlayBackgroundMusic(SoundManager.Instance.backgroundSound);
 
 
     }
@@ -91,7 +92,7 @@ public class Control : MonoBehaviour
         if (isMoveLeft)
         {
             transform.position += Vector3.left * 5 * Time.deltaTime;
-            animator.SetBool("IsGo", true);
+
             //  animator.SetBool("IsJump", false);
             // if (!audioSource.isPlaying && isGrounded)
             // {
@@ -99,6 +100,7 @@ public class Control : MonoBehaviour
             // }
             if (isGrounded)
             {
+                animator.SetBool("IsGo", true);
                 SoundManager.Instance.PlayWalkSound();
             }
 
@@ -108,7 +110,7 @@ public class Control : MonoBehaviour
         if (isMoveRight)
         {
             transform.position += Vector3.right * 5 * Time.deltaTime;
-            animator.SetBool("IsGo", true);
+
             //animator.SetBool("IsJump", false);
             // if (!audioSource.isPlaying && isGrounded)
             // {
@@ -116,6 +118,7 @@ public class Control : MonoBehaviour
             // }
             if (isGrounded)
             {
+                animator.SetBool("IsGo", true);
                 SoundManager.Instance.PlayWalkSound();
             }
         }
@@ -124,11 +127,11 @@ public class Control : MonoBehaviour
         float currentY = transform.position.y;
 
         // Перевірка напрямку переміщення
-        if (currentY > previousY)
+        if (currentY > previousY + 0.001f)
         {
             addForce = 2f;
         }
-        else if (currentY < previousY)
+        else if (currentY < previousY - 0.001f)
         {
             addForce = -2f;
         }
@@ -312,6 +315,7 @@ public class Control : MonoBehaviour
             {
                 isGrounded = false;
                 animator.SetBool("IsJump", true);
+                animator.SetBool("IsGo", false);
                 SoundManager.Instance.StopWalkSound();
 
             }

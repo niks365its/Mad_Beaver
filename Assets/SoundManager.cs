@@ -7,7 +7,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource audioSourceEffects;
     public AudioSource audioSourceWalk;
 
-    public AudioClip backgroundSound, walkSound, shotSound, mushroomSound, hitSound, jumpSound, flyStickSound, emptyStickSound, fallSound, woodGetSound, sharpSound, treesTrapSound, fireworkSound, deathSound, gameOverSound;
+    public AudioClip backgroundSound, windSound, walkSound, shotSound, mushroomSound, hitSound, jumpSound, flyStickSound, emptyStickSound, fallSound, woodGetSound, sharpSound, treesTrapSound, fireworkSound, deathSound, gameOverSound, hintSound;
 
     private void Awake()
     {
@@ -23,11 +23,11 @@ public class SoundManager : MonoBehaviour
     //     PlayBackgroundMusic();
     // }
 
-    public void PlayBackgroundMusic()
+    public void PlayBackgroundMusic(AudioClip backgroundClip)
     {
-        if (backgroundSound != null)
+        if (backgroundClip != null && audioSourceMusic.clip != backgroundClip)
         {
-            audioSourceMusic.clip = backgroundSound;
+            audioSourceMusic.clip = backgroundClip;
             audioSourceMusic.loop = true;
             audioSourceMusic.Play();
         }
@@ -80,10 +80,11 @@ public class SoundManager : MonoBehaviour
 
     public void StopBackgroundSound()
     {
-        if (audioSourceEffects.isPlaying)
+        if (audioSourceMusic.isPlaying)
         {
             audioSourceMusic.Stop(); // Перериваємо звук кроків
         }
     }
+
 
 }

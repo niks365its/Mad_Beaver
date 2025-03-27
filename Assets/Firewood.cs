@@ -7,6 +7,7 @@ public class Firewood : MonoBehaviour
 {
     public Text firewoodText;
     public int addSum = 10;
+    public Animator hintAnimator;
 
     // public AudioSource audioSource;
     // public AudioClip woodAddSound;
@@ -20,6 +21,7 @@ public class Firewood : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            hintAnimator.SetBool("IsHintExit", true);
             GlobalResources.Firewood += addSum;
             firewoodText.text = "" + GlobalResources.Firewood;
             //audioSource.PlayOneShot(woodAddSound);

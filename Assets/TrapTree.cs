@@ -7,7 +7,7 @@ public class TrapTree : MonoBehaviour
     public float damageToPlayer = 30f;
     public float knockbackForce = 8f;
     public Animator animator;
-    private bool hasCollided = false;
+    public Animator squirrelAnimator;
     private float cooldownTimer = 0f;
     private float cooldownDuration = 1f; // Час між спрацьовуваннями
 
@@ -21,16 +21,16 @@ public class TrapTree : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !hasCollided)
+
+        if (collision.gameObject.CompareTag("Player") && cooldownTimer <= 0f)
         {
+
             animator.SetBool("IsJump", false);
             HealthBar healthBar = collision.gameObject.GetComponent<HealthBar>();
             if (healthBar != null)
             {
                 healthBar.TakeDamage(damageToPlayer);
             }
-
-            hasCollided = true;
 
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.treesTrapSound);
 
@@ -41,15 +41,16 @@ public class TrapTree : MonoBehaviour
                 playerRb.velocity = Vector2.zero; // Скидаємо поточну швидкість
                 playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
             }
+            StartCoroutine(OnSquirrelAnimationEnd()); // Запускаємо корутину для відпрацювання анімаці�� зубра
+            cooldownTimer = cooldownDuration; // Запускаємо таймер перед наступним можливим спрацьовуванням
 
-
-            cooldownTimer = cooldownDuration; // Запускаємо таймер
         }
-
-
     }
-    void OnCollisionExit(Collision collision)
+    public IEnumerator OnSquirrelAnimationEnd()
     {
-        hasCollided = false;
+        yield return new WaitForSeconds(1f);
+        squirrelAnimator.SetBool("IsView", true);
+        yield return new WaitForSeconds(squirrelAnimator.GetCurrentAnimatorStateInfo(0).length);
+        squirrelAnimator.SetBool("IsView", false);
     }
 }

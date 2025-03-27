@@ -17,12 +17,9 @@ public class HunterControl : MonoBehaviour
     private float cooldownTimer;
 
     public Animator animator;
+    private int dir;
 
     private bool isAttacking = false;
-    private bool readyToShoot = false; // Чекає на завершення зміни анімації
-
-    // public AudioSource audioSource;
-    // public AudioClip shotSound;
 
     void Start()
     {
@@ -36,8 +33,9 @@ public class HunterControl : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
 
-            // Повернення в напрямку руху
             Vector3 direction = target.position - transform.position;
+
+
             if (direction.x != 0)
             {
                 transform.localScale = new Vector3(Mathf.Sign(direction.x), 1, 1);
@@ -45,30 +43,13 @@ public class HunterControl : MonoBehaviour
 
             if (Vector2.Distance(transform.position, target.position) < 0.1f)
             {
-                if (target == pointA)
-                {
-                    target = pointB;
-                }
-                else
-                {
-                    target = pointA;
-                }
+                target = target == pointA ? pointB : pointA;
             }
         }
-
-        else if (player != null)
+        else if (player != null && cooldownTimer <= 0f)
         {
-            Vector2 hunterPosition = (Vector2)hunter.transform.position;
-            // Динамічне оновлення анімації в залежності від кута
-            UpdateAnimation(hunterPosition, player.position);
-
-            // Якщо анімація оновлена, виконуємо постріл
-            if (readyToShoot && cooldownTimer <= 0f)
-            {
-                Attack(hunterPosition, player.position);
-                cooldownTimer = attackCooldown;
-                readyToShoot = false; // Чекаємо наступного оновлення анімації
-            }
+            Attack();
+            cooldownTimer = attackCooldown;
         }
 
         cooldownTimer -= Time.deltaTime;
@@ -81,59 +62,32 @@ public class HunterControl : MonoBehaviour
             player = other.transform;
             isAttacking = true;
 
-            // Повернення в напрямку гравця
             Vector3 playerDirection = player.position - transform.position;
             if (playerDirection.x != 0)
             {
                 transform.localScale = new Vector3(Mathf.Sign(playerDirection.x), 1, 1);
             }
 
-            // Спочатку оновлюємо анімацію, а потім чекаємо, коли можна буде стріляти
-            Vector2 hunterPosition = (Vector2)hunter.transform.position;
-            UpdateAnimation(hunterPosition, player.position);
-            readyToShoot = true;
+            animator.SetBool("IsHunterAttack", true);
         }
     }
-
 
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             isAttacking = false;
-            readyToShoot = false;
             animator.SetBool("IsHunterAttack", false);
-            animator.SetBool("IsHunterAttackDown", false);
         }
     }
-
-
-    void Attack(Vector2 hunterPosition, Vector2 targetPosition)
+    void Attack()
     {
         SoundManager.Instance.PlayOneShot(SoundManager.Instance.shotSound);
-        // animator.SetBool("IsHunterAttack", true);
-        GameObject bullet = Instantiate(projectile, firePoint.position, projectile.transform.rotation);
-        // Vector2 direction = (targetPosition - (Vector2)firePoint.position).normalized;
-        Vector2 direction = (targetPosition - hunterPosition).normalized;
 
-        bullet.GetComponent<Rigidbody2D>().velocity = direction * 5f; // Швидкість кулі
+        Vector2 direction = ((Vector2)player.position - (Vector2)firePoint.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Обчислення кута
 
-    }
-
-    void UpdateAnimation(Vector2 hunterPosition, Vector2 targetPosition)
-    {
-        Vector2 directionToPlayer = (targetPosition - hunterPosition).normalized;
-        float angle = Vector2.Angle(Vector2.right, directionToPlayer); // Кут між напрямком атаки і горизонталлю
-
-        if (angle <= 25f)
-        {
-            animator.SetBool("IsHunterAttack", true);
-            animator.SetBool("IsHunterAttackDown", false);
-        }
-        else
-        {
-            animator.SetBool("IsHunterAttack", false);
-            animator.SetBool("IsHunterAttackDown", true);
-        }
+        GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.Euler(0, 0, angle + 90));
+        bullet.GetComponent<Rigidbody2D>().velocity = direction * 5f;
     }
 }

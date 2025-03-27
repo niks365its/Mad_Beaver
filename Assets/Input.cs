@@ -251,7 +251,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b63a3372-6c41-4162-9eab-670f64b17b96"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
