@@ -7,9 +7,17 @@ public class FlyStickControl : MonoBehaviour
 {
     public float onPlayerDamage = 10f; // Кількість пошкоджень
     public float onEnemyDamage = 10f; // Кількість пошкоджень
+    public bool isPlayer = true;
+    private float cooldownTimer = 0f;
+    private float cooldownDuration = 0.3f; // Час між спрацьовуваннями
 
-    // public AudioSource audioSource;
-    // public AudioClip impactSound;
+    private void Update()
+    {
+        if (cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+    }
 
     void Start()
     {
@@ -20,7 +28,7 @@ public class FlyStickControl : MonoBehaviour
     {
 
 
-        if (collision.gameObject.CompareTag("Player")) // Перевірити, чи це персонаж
+        if (collision.gameObject.CompareTag("Player") && !isPlayer) // Перевірити, чи це персонаж
         {
             HealthBar healthBar = collision.gameObject.GetComponent<HealthBar>();
             if (healthBar != null)
@@ -35,7 +43,7 @@ public class FlyStickControl : MonoBehaviour
 
 
 
-        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("TreesTrap")) // Якщо це ворог
+        if ((collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("TreesTrap")) && isPlayer && cooldownTimer <= 0f) // Якщо це ворог
         {
             EnemyHealthBar enemyHealth = collision.gameObject.GetComponent<EnemyHealthBar>();
             if (enemyHealth != null)
@@ -44,6 +52,7 @@ public class FlyStickControl : MonoBehaviour
                                                        // audioSource.PlayOneShot(impactSound);
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.hitSound);
                 GetComponent<SpriteRenderer>().enabled = false;
+                 cooldownTimer = cooldownDuration; // Запускаємо таймер перед наступним можливим спрацьовуванням
             }
         }
 

@@ -7,14 +7,14 @@ public class SoundManager : MonoBehaviour
     public AudioSource audioSourceEffects;
     public AudioSource audioSourceWalk;
 
-    public AudioClip backgroundSound, windSound, walkSound, shotSound, mushroomSound, hitSound, jumpSound, flyStickSound, emptyStickSound, fallSound, woodGetSound, sharpSound, treesTrapSound, fireworkSound, deathSound, gameOverSound, hintSound;
+    public AudioClip backgroundSound, windSound, walkSound, shotSound, mushroomSound, hitSound, jumpSound, flyStickSound, emptyStickSound, fallSound, woodGetSound, sharpSound, treesTrapSound, fireworkSound, deathSound, gameOverSound, hintSound, airSound;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
 
     // private void Start()
@@ -58,6 +58,22 @@ public class SoundManager : MonoBehaviour
             audioSourceWalk.Stop(); // Перериваємо звук кроків
             audioSourceEffects.PlayOneShot(clip);
         }
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        audioSourceWalk.Stop(); // Перериваємо звук кроків
+        audioSourceEffects.clip = clip; // Призначаємо кліп
+        audioSourceEffects.loop = true; // Встановлюємо повтор
+        audioSourceEffects.Play(); // Програємо звук
+    }
+
+
+    public void StopSound()
+    {
+
+        audioSourceEffects.Stop();
+
     }
 
     public void StopEffect(AudioClip clip)

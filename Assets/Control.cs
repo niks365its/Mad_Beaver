@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,33 +10,30 @@ using UnityEngine.UI;
 public class Control : MonoBehaviour
 
 {
-    // public AudioSource audioSource;
-    // public AudioClip jumpSound;
-    // public AudioClip walkSound;
-    // public AudioClip hitFailSound;
-    // public AudioClip hitSound;
-    // public AudioClip startSound;
-    // public AudioClip sharpHitSound;
-
-
-
     private Input input;
 
     private bool isMoveLeft = false;
     private bool isMoveRight = false;
     //private bool isJumping;
     private bool isGrounded = false;
+    public bool isWater = false;
 
     public Animator animator;
 
     public GameObject gameOverMenu;
 
     public GameObject Player;
+    public GameObject screenController;
+    private bool isTouch = false;
+
     private bool isGameOver = false;
 
     private Rigidbody2D rb;
     public float jumpForce = 5f;
     public float pauseTime = 5f;
+
+    public float gravity = 1f;
+    private float defaultGravity;
 
     public GameObject stickPrefab; // Префаб камінчика
     public Transform throwPoint;  // Точка, з якої кидатиметься камінчик
@@ -47,8 +45,14 @@ public class Control : MonoBehaviour
     private float previousY;
     private float addForce = 0f;
 
+
+
     private float lastThrowTime = 0f;
     private float throwCooldown = 0.3f; // Час між кидками
+
+    private Vector2 previousPosition;
+    public ParticleSystem bubbleSystem; // Посилання на систему частинок
+    private ParticleSystem.VelocityOverLifetimeModule velocityModule;
 
     // Start is called before the first frame update
     void Awake()
@@ -61,9 +65,12 @@ public class Control : MonoBehaviour
         input.player.Right.performed += moveRight;
         input.player.Right.canceled += stopRight;
         input.player.Jump.performed += onJump;
+        input.player.Down.performed += onDown;
+        input.player.Down.canceled += onStopDown;
         input.player.AngleJump.performed += onAngleJump;
         input.player.Throw.performed += stickFly;
-        input.player.Throw.canceled += stickNoFly;
+        // input.player.Throw.canceled += stickNoFly;
+
 
 
     }
@@ -72,15 +79,20 @@ public class Control : MonoBehaviour
     {
         SoundManager.Instance.StopEffectsSound();
         rb = GetComponent<Rigidbody2D>();
+        defaultGravity = rb.gravityScale;
 
         animator = GetComponent<Animator>();
 
         previousY = transform.position.y;
 
         // audioSource.PlayOneShot(startSound);
-
+        GlobalResources.Firewood = 0;
 
         SoundManager.Instance.PlayBackgroundMusic(SoundManager.Instance.backgroundSound);
+
+        // Отримуємо доступ до Velocity over Lifetime модуля
+        velocityModule = bubbleSystem.velocityOverLifetime;
+        previousPosition = transform.position;
 
 
     }
@@ -122,39 +134,58 @@ public class Control : MonoBehaviour
                 SoundManager.Instance.PlayWalkSound();
             }
         }
-
-        // Зчитування поточної позиції по осі Y
-        float currentY = transform.position.y;
-
-        // Перевірка напрямку переміщення
-        if (currentY > previousY + 0.001f)
+        if (!isWater)
         {
-            addForce = 2f;
+            // Зчитування поточної позиції по осі Y
+            float currentY = transform.position.y;
+
+            // Перевірка напрямку переміщення
+            if (currentY > previousY + 0.001f)
+            {
+                addForce = 2f;
+            }
+            else if (currentY < previousY - 0.001f)
+            {
+                addForce = -2f;
+            }
+
+            else
+            {
+                addForce = 0f;
+            }
+
+            // Оновлення попередньої позиції
+            previousY = currentY;
+
         }
-        else if (currentY < previousY - 0.001f)
+
+        if (isWater)
         {
-            addForce = -2f;
+            // Обчислюємо швидкість персонажа (напрямок руху)
+            Vector2 currentPosition = transform.position;
+            Vector2 velocity = (currentPosition - previousPosition) / Time.deltaTime;
+
+            previousPosition = currentPosition;
+
+            // Використовуємо горизонтальну швидкість для зміни orbitalY
+            velocityModule.x = velocity.x * -1f; // -4f для масштабування ефекту
         }
-
-        else
-        {
-            addForce = 0f;
-        }
-
-        // Оновлення попередньої позиції
-        previousY = currentY;
-
     }
 
 
     private void OnEnable()
     {
         input.Enable();
+        if (SystemInfo.deviceType != DeviceType.Desktop)
+        {
+            screenController.SetActive(true);
+        }
     }
 
     private void OnDisable()
     {
         input.Disable();
+        screenController.SetActive(false);
     }
 
     private void moveLeft(InputAction.CallbackContext context)
@@ -194,7 +225,7 @@ public class Control : MonoBehaviour
 
     public void onJump(InputAction.CallbackContext context)
     {
-        if (isGrounded) // Only jump if grounded
+        if (isWater || isGrounded) // Only jump if grounded
         {
 
             rb.velocity = new Vector2(rb.velocity.x, jumpForce + addForce);
@@ -213,9 +244,33 @@ public class Control : MonoBehaviour
         }
     }
 
+    public void onDown(InputAction.CallbackContext context)
+    {
+        if (isWater)
+        {
+            rb.gravityScale = gravity;
+
+            animator.SetBool("IsSwim", false);
+
+            // Зупиняємо звук кроків перед стрибком
+            SoundManager.Instance.StopWalkSound();
+
+
+            // Відтворюємо звук стрибка
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+        }
+    }
+
+    public void onStopDown(InputAction.CallbackContext context)
+    {
+        if (isWater)
+            rb.gravityScale = defaultGravity;
+        animator.SetBool("IsSwim", true);
+    }
+
     public void onAngleJump(InputAction.CallbackContext context)
     {
-        if (isGrounded) // Only jump if grounded
+        if (isWater || isGrounded) // Only jump if grounded
         {
             float direction = transform.localScale.x > 0 ? 1f : -1f;
             rb.velocity = new Vector2(jumpForce * 0.5f * direction, jumpForce + addForce);
@@ -236,10 +291,9 @@ public class Control : MonoBehaviour
 
     public void stickFly(InputAction.CallbackContext context)
     {
-        animator.SetBool("IsThrow", true);
+        StartCoroutine(ThrowAnimation());
         if (GlobalResources.Firewood > 0)
         {
-
             //  audioSource.PlayOneShot(hitSound);
             if (Time.time - lastThrowTime < throwCooldown)
                 return; // Якщо ще не минуло 0.5 секунди, виходимо
@@ -257,9 +311,17 @@ public class Control : MonoBehaviour
                 float direction = transform.localScale.x > 0 ? 1f : -1f;
                 rb.velocity = new Vector2(throwForce * direction, 0);
 
+                if (isWater)
+                {
+                    // Додаємо обертання кулі під час її руху
+                    rb.angularVelocity = -300f;
+                }
+
                 GlobalResources.Firewood -= 1;
                 firewoodText.text = "" + GlobalResources.Firewood;
+
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
+
             }
         }
         else
@@ -267,13 +329,21 @@ public class Control : MonoBehaviour
             firewoodText.text = "X";
             //  audioSource.PlayOneShot(hitFailSound);
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.emptyStickSound);
+
         }
     }
 
-    public void stickNoFly(InputAction.CallbackContext context)
+    public IEnumerator ThrowAnimation()
     {
+        animator.SetBool("IsThrow", true);
+        yield return new WaitForSeconds(0.1f);
         animator.SetBool("IsThrow", false);
     }
+
+    // public void stickNoFly(InputAction.CallbackContext context)
+    // {
+    //     animator.SetBool("IsThrow", false);
+    // }
 
     public void OnPause()
     {
@@ -308,13 +378,20 @@ public class Control : MonoBehaviour
     {
 
 
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && !isGameOver)
         {
             groundContacts--;
             if (groundContacts <= 0) // Якщо всі контакти зникли, то персонаж у повітрі
             {
                 isGrounded = false;
-                animator.SetBool("IsJump", true);
+                if (!isWater)
+                {
+                    animator.SetBool("IsJump", true);
+                }
+                else if (isWater)
+                {
+                    animator.SetBool("IsSwim", true);
+                }
                 animator.SetBool("IsGo", false);
                 SoundManager.Instance.StopWalkSound();
 
@@ -328,9 +405,13 @@ public class Control : MonoBehaviour
     {
         if (!isGameOver)
         {
+            screenController.SetActive(false);
             // SoundManager.Instance.StopEffectsSound();
             isGameOver = true;
-            animator.SetTrigger("GameOverTrigger");
+            isGrounded = true;
+            animator.SetBool("IsSwim", false);
+
+            animator.SetBool("IsDead", true);
             //SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
 
             // Додатково: зупинити рух або інші дії персонажа
@@ -347,13 +428,11 @@ public class Control : MonoBehaviour
 
     public IEnumerator GameOverMenu()
     {
+        screenController.SetActive(false);
         yield return new WaitForSeconds(3f);
         // Зупиняємо звуки
         SoundManager.Instance.StopEffectsSound();
         SoundManager.Instance.StopBackgroundSound();
-
-
-
 
         gameOverMenu.SetActive(true);
         SoundManager.Instance.PlayOneShot(SoundManager.Instance.gameOverSound);
@@ -367,6 +446,13 @@ public class Control : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void NextLevel(int level)
+    {
+        SoundManager.Instance.StopEffectsSound();
+        SceneManager.LoadScene(level);
+        FindObjectOfType<GameMenus>().LevelCompleted(level);
+    }
+
     public void ExitGame()
     {
         // Закриваємо гру (працює тільки у збірці)
@@ -377,4 +463,39 @@ public class Control : MonoBehaviour
 #endif
     }
 
+    public void TouchLeft()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        moveLeft(fakeContext);
+    }
+
+    public void TouchRight()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        moveRight(fakeContext);
+    }
+
+    public void UnTouchLeft()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        stopLeft(fakeContext);
+    }
+
+    public void UnTouchRight()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        stopRight(fakeContext);
+    }
+
+    public void TouchJump()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        onJump(fakeContext);
+    }
+
+    public void TouchThrow()
+    {
+        var fakeContext = new InputAction.CallbackContext();
+        stickFly(fakeContext);
+    }
 }

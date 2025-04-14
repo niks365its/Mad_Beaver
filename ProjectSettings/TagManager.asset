@@ -9,6 +9,8 @@ TagManager:
   - Mushroom
   - Ground
   - TreesTrap
+  - pirahna
+  - AirBubble
   layers:
   - Default
   - TransparentFX

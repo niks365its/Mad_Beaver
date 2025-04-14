@@ -15,20 +15,29 @@ public class HunterControl : MonoBehaviour
     private Transform player; // Посилання на гравця
     public float attackCooldown = 2f;
     private float cooldownTimer;
+    public bool isPike = false; // ��кщо ворог - щука
 
     public Animator animator;
-    private int dir;
+    private int dir = 1;
 
     private bool isAttacking = false;
+    public bool IsAttacking => isAttacking;
 
     void Start()
     {
+        if (isPike)
+        {
+            dir = -1;
+        }
+
         target = pointA;
         Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Hunter"), LayerMask.NameToLayer("Player"), true);
     }
 
     void Update()
     {
+
+
         if (!isAttacking)
         {
             transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
@@ -38,7 +47,10 @@ public class HunterControl : MonoBehaviour
 
             if (direction.x != 0)
             {
-                transform.localScale = new Vector3(Mathf.Sign(direction.x), 1, 1);
+
+                Vector3 currentScale = transform.localScale;
+                currentScale.x = Mathf.Abs(currentScale.x) * Mathf.Sign(dir * direction.x);
+                transform.localScale = currentScale;
             }
 
             if (Vector2.Distance(transform.position, target.position) < 0.1f)
@@ -65,10 +77,13 @@ public class HunterControl : MonoBehaviour
             Vector3 playerDirection = player.position - transform.position;
             if (playerDirection.x != 0)
             {
-                transform.localScale = new Vector3(Mathf.Sign(playerDirection.x), 1, 1);
+                // transform.localScale = new Vector3(Mathf.Sign(playerDirection.x), 1, 1);
+                Vector3 currentScale = transform.localScale;
+                currentScale.x = Mathf.Abs(currentScale.x) * Mathf.Sign(dir * playerDirection.x);
+                transform.localScale = currentScale;
             }
 
-            animator.SetBool("IsHunterAttack", true);
+
         }
     }
 
@@ -77,7 +92,7 @@ public class HunterControl : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isAttacking = false;
-            animator.SetBool("IsHunterAttack", false);
+            // animator.SetBool("IsHunterAttack", false);
         }
     }
     void Attack()
@@ -89,5 +104,13 @@ public class HunterControl : MonoBehaviour
 
         GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.Euler(0, 0, angle + 90));
         bullet.GetComponent<Rigidbody2D>().velocity = direction * 5f;
+        animator.SetBool("IsHunterAttack", true);
+        StartCoroutine(ResetAttackAnim());
+    }
+
+    IEnumerator ResetAttackAnim()
+    {
+        yield return new WaitForSeconds(0.6f); // час залежить від вашої анімації
+        animator.SetBool("IsHunterAttack", false);
     }
 }

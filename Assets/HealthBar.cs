@@ -17,7 +17,7 @@ public class HealthBar : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Скрипт прикріплений до: " + gameObject.name);
+        Debug.Log("Скрипт HealthBar прикріплений до: " + gameObject.name);
 
 
         currentHealth = maxHealth; // Задати початкове здоров'я
@@ -43,7 +43,9 @@ public class HealthBar : MonoBehaviour
 
     public void ZeroHealth()
     {
-        animator.SetTrigger("GameOverTrigger");
+
+
+        animator.SetBool("IsDead", true);
 
         if (life > 1)
         {
@@ -62,7 +64,9 @@ public class HealthBar : MonoBehaviour
 
     IEnumerator HandleGameOver()
     {
-        animator.SetTrigger("GameOverTrigger"); // Викликаємо анімацію
+
+
+        animator.SetBool("IsDead", true); // Викликаємо анімацію
         yield return new WaitForSeconds(3f); // Чекаємо 3 секунди
         life--; // Зменшуємо кількість життя
         UpdateLifeText(); // Оновлюємо текст життя
@@ -80,7 +84,9 @@ public class HealthBar : MonoBehaviour
         if (currentHealth <= 0)
         {
             animator.SetBool("IsJump", false);
-            animator.SetTrigger("GameOverTrigger");
+
+
+            animator.SetBool("IsDead", true);
 
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
 

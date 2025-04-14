@@ -6,20 +6,23 @@ using UnityEngine;
 public class Sharp : MonoBehaviour
 {
     public Animator animator;
-    public HealthBar healthBar;
+    public HealthBar healthBeaver;
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
             Control player = collision.GetComponent<Control>();
             animator.SetBool("IsJump", false);
-            // animator.SetTrigger("GameOverTrigger");
+
+            animator.SetTrigger("GameOverTrigger");
+            animator.SetBool("IsDead", true);
+
             //  audioSource.PlayOneShot(sharpHitSound);
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.sharpSound);
             player.enabled = false;
-            healthBar.ZeroHealth();
+            healthBeaver.ZeroHealth();
         }
     }
 }

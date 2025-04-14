@@ -18,6 +18,7 @@ public class HomeScript : MonoBehaviour
             {
                 home.SetActive(false);
                 levelCompleted.SetActive(true);
+                FindObjectOfType<GameMenus>().LevelCompleted(2);
                 Player.SetActive(false);
                 playerBar.SetActive(false);
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.fireworkSound);
