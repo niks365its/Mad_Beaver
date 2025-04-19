@@ -12,6 +12,9 @@ public class AirBar : MonoBehaviour
     private float decreaseRate;
     public float increaseRate = 50f;
     private bool isAir = false;
+    private Rigidbody2D rb;
+    private float defaultGravity;
+    public float gravity = 1f;
 
 
     void Start()
@@ -21,6 +24,9 @@ public class AirBar : MonoBehaviour
         airSlider.value = currentAir;
 
         decreaseRate = maxAir / timer; // 20 секунд до нуля
+
+        rb = GetComponent<Rigidbody2D>();
+        defaultGravity = rb.gravityScale;
     }
 
     void Update()
@@ -53,6 +59,7 @@ public class AirBar : MonoBehaviour
             //airSlider.value = currentAir;
             isAir = true;
             SoundManager.Instance.PlaySound(SoundManager.Instance.airSound);
+            rb.gravityScale = gravity;
 
         }
     }
@@ -66,7 +73,7 @@ public class AirBar : MonoBehaviour
 
 
             SoundManager.Instance.StopSound();
-
+            rb.gravityScale = defaultGravity;
         }
     }
 

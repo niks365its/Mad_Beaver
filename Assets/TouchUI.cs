@@ -13,6 +13,11 @@ public class TouchUI : MonoBehaviour
     public Control playerControl;
     public GameMenus gameMenu;
 
+    //     void Update()
+    // {
+    //     Debug.Log("Touch count: " + Input.touchCount);
+    // }
+
     void Start()
     {
         // Додаємо обробники для натискань та відпускань

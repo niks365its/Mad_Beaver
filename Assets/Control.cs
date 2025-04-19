@@ -105,11 +105,6 @@ public class Control : MonoBehaviour
         {
             transform.position += Vector3.left * 5 * Time.deltaTime;
 
-            //  animator.SetBool("IsJump", false);
-            // if (!audioSource.isPlaying && isGrounded)
-            // {
-            //     audioSource.PlayOneShot(walkSound);
-            // }
             if (isGrounded)
             {
                 animator.SetBool("IsGo", true);
@@ -123,11 +118,6 @@ public class Control : MonoBehaviour
         {
             transform.position += Vector3.right * 5 * Time.deltaTime;
 
-            //animator.SetBool("IsJump", false);
-            // if (!audioSource.isPlaying && isGrounded)
-            // {
-            //     audioSource.PlayOneShot(walkSound);
-            // }
             if (isGrounded)
             {
                 animator.SetBool("IsGo", true);
@@ -185,7 +175,11 @@ public class Control : MonoBehaviour
     private void OnDisable()
     {
         input.Disable();
-        screenController.SetActive(false);
+        if (screenController)
+        {
+            screenController.SetActive(false);
+        }
+
     }
 
     private void moveLeft(InputAction.CallbackContext context)
@@ -196,6 +190,7 @@ public class Control : MonoBehaviour
         transform.localScale = scale;
 
         //  animator.SetBool("IsJump", false);
+        rb.velocity = new Vector2(0f, rb.velocity.y);
     }
     private void stopLeft(InputAction.CallbackContext context)
     {
@@ -203,6 +198,7 @@ public class Control : MonoBehaviour
         animator.SetBool("IsGo", false);
         // audioSource.Stop();
         SoundManager.Instance.StopWalkSound();
+
     }
 
     private void moveRight(InputAction.CallbackContext context)
@@ -212,6 +208,7 @@ public class Control : MonoBehaviour
         scale.x = 0.25f; // Змінюємо знак по осі X
         transform.localScale = scale;
         // animator.SetBool("IsJump", false);
+        rb.velocity = new Vector2(0f, rb.velocity.y);
     }
 
     private void stopRight(InputAction.CallbackContext context)
