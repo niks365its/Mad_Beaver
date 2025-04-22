@@ -21,7 +21,7 @@ public class FlyStickControl : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, 4f); // Знищення через 5 секунд
+        Destroy(gameObject, 1.7f); // Знищення через 5 секунд
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -52,11 +52,18 @@ public class FlyStickControl : MonoBehaviour
                                                        // audioSource.PlayOneShot(impactSound);
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.hitSound);
                 GetComponent<SpriteRenderer>().enabled = false;
-                 cooldownTimer = cooldownDuration; // Запускаємо таймер перед наступним можливим спрацьовуванням
+                cooldownTimer = cooldownDuration; // Запускаємо таймер перед наступним можливим спрацьовуванням
             }
         }
 
+        if (collision.gameObject.CompareTag("wallBalk") && isPlayer && cooldownTimer <= 0f) // Якщо це ворог
+        {
+            Destroy(collision.gameObject);
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.hitSound);
+            GetComponent<SpriteRenderer>().enabled = false;
+            cooldownTimer = cooldownDuration; // Запускаємо таймер перед наступним можливим спрацьовуванням
 
+        }
 
         Destroy(gameObject, SoundManager.Instance.hitSound.length); // Знищення після зіткнення
 

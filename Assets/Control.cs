@@ -94,7 +94,7 @@ public class Control : MonoBehaviour
         velocityModule = bubbleSystem.velocityOverLifetime;
         previousPosition = transform.position;
 
-
+        Debug.Log("touchScreen is: (for start)" + TouchControlsManager.Instance.IsTouch);
     }
 
 
@@ -162,13 +162,21 @@ public class Control : MonoBehaviour
         }
     }
 
-
     private void OnEnable()
     {
         input.Enable();
-        if (SystemInfo.deviceType != DeviceType.Desktop)
+
+        Debug.Log("touchScreen is: (for enable)" + TouchControlsManager.Instance.IsTouch);
+
+        if (TouchControlsManager.Instance != null && TouchControlsManager.Instance.IsTouch)
         {
             screenController.SetActive(true);
+            Debug.Log("touchScreen is (for true): " + TouchControlsManager.Instance.IsTouch);
+        }
+        else
+        {
+            screenController.SetActive(false);
+            Debug.Log("touchScreen is: (for false)" + TouchControlsManager.Instance.IsTouch);
         }
     }
 
@@ -270,7 +278,7 @@ public class Control : MonoBehaviour
         if (isWater || isGrounded) // Only jump if grounded
         {
             float direction = transform.localScale.x > 0 ? 1f : -1f;
-            rb.velocity = new Vector2(jumpForce * 0.5f * direction, jumpForce + addForce);
+            rb.velocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
             // audioSource.Stop();
             // audioSource.PlayOneShot(jumpSound);
 
