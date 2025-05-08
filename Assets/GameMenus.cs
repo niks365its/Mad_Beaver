@@ -10,6 +10,7 @@ public class GameMenus : MonoBehaviour
     public GameObject exitMenu;
     public GameObject Player;
     public GameObject LevelMenu;
+    public GameObject SettingsMenu;
 
     private int selectedSceneIndex;
     private int reachedSceneIndex;
@@ -42,6 +43,14 @@ public class GameMenus : MonoBehaviour
 
     public void SelectLevel(int sceneIndex)
     {
+        // Якщо обраний рівень більший за досягнутий — ігноруємо натискання
+        if (sceneIndex > reachedSceneIndex)
+        {
+            Debug.Log("Цей рівень ще не досягнутий.");
+            return;
+        }
+
+        // Інакше зберігаємо вибір
         // Користувач вибирає рівень у меню
         selectedSceneIndex = sceneIndex;
         PlayerPrefs.SetInt("SelectedScene", sceneIndex);
@@ -61,16 +70,41 @@ public class GameMenus : MonoBehaviour
 
     public void SetSelectedButton(Button button)
     {
-        // Змінюємо стан вибраної кнопки
+        // Якщо була раніше вибрана кнопка — повертаємо її до нормального стану
         if (selectedButton != null)
         {
-            selectedButton.interactable = true; // Активуємо попередню кнопку
+            selectedButton.interactable = true;
         }
 
+        // Якщо передано null — знімаємо вибір
+        if (button == null)
+        {
+            selectedButton = null;
+
+            // Знаходимо EventSystem і скидаємо вибір
+            eventSystem = FindObjectOfType<EventSystem>();
+            if (eventSystem != null)
+            {
+                eventSystem.SetSelectedGameObject(null);
+            }
+
+            return;
+        }
+
+        // Інакше — вибираємо нову кнопку
         selectedButton = button;
-        selectedButton.interactable = false; // Деактивуємо поточну кнопку
+        selectedButton.interactable = false;
+
         eventSystem = FindObjectOfType<EventSystem>();
-        eventSystem.SetSelectedGameObject(targetButton);
+        if (eventSystem != null && targetButton != null)
+        {
+            eventSystem.SetSelectedGameObject(targetButton);
+        }
+    }
+
+    public void ClearSelectedButton()
+    {
+        SetSelectedButton(null);
     }
 
     public void GameStart()
@@ -124,12 +158,6 @@ public class GameMenus : MonoBehaviour
         Player.SetActive(true);
     }
 
-    public void BackToMaim()
-    {
-        LevelMenu.SetActive(false);
-
-    }
-
     public void LevelSelect()
     {
         StartCoroutine(LevelSelectDelay()); // Викликаємо корутину затримки перед закриттям
@@ -140,6 +168,30 @@ public class GameMenus : MonoBehaviour
         yield return new WaitForSeconds(1); // Затримка на 1 секунди перед закриттям
 
         LevelMenu.SetActive(true);
+    }
+
+    public void BackToMaim()
+    {
+        LevelMenu.SetActive(false);
+
+    }
+
+    public void SettingsOn()
+    {
+        StartCoroutine(SettingsOnDelay()); // Викликаємо корутину затримки перед закриттям
+    }
+
+    private IEnumerator SettingsOnDelay()
+    {
+        yield return new WaitForSeconds(1); // Затримка на 1 секунди перед закриттям
+
+        SettingsMenu.SetActive(true);
+    }
+
+    public void SettingsOff()
+    {
+        SettingsMenu.SetActive(false);
+
     }
 
     // Метод для кнопки "Вихід з гри"

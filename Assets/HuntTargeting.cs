@@ -31,7 +31,10 @@ public class TurretFollow : MonoBehaviour
                 (hunter.localScale.x == -1 && target.position.x > hunter.position.x))
             {
                 transform.rotation = Quaternion.Euler(0, 0, 0);
-                rb.velocity = Vector2.zero; // Зупинити рух
+                if (isPike)
+                {
+                    rb.velocity = Vector2.zero; // Зупинити рух
+                }
                 return;
             }
 
@@ -52,7 +55,8 @@ public class TurretFollow : MonoBehaviour
         }
         else
         {
-            rb.velocity = Vector2.zero; // Якщо цілі немає або не атакує — стоїмо
+            if (isPike)
+                rb.velocity = Vector2.zero; // Якщо цілі немає або не атакує — стоїмо
         }
     }
 }

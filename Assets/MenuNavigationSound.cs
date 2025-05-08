@@ -4,24 +4,24 @@ using UnityEngine.EventSystems;
 public class MenuNavigationSound : MonoBehaviour
 {
     private AudioSource audioSource;
-    private AudioClip hoverSound;
+    public AudioClip hoverSound;
     private GameObject lastSelected;
 
-    void Start()
+    private void Start()
     {
-        // Додаємо AudioSource до об'єкта
-        audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Завантажуємо звук із вбудованих ресурсів (повинен бути в папці "Resources")
-        hoverSound = Resources.Load<AudioClip>("Sounds/pop-39222");
+        Debug.Log($"Script is attached to: {gameObject.name}", gameObject);
+
+        // Отримуємо AudioSource компонента
+        audioSource = GetComponent<AudioSource>();
 
         if (hoverSound == null)
         {
-            Debug.LogError("Не знайдено звуковий файл hover_sound у папці Resources!");
+            Debug.LogError("Не знайдено звуковий файл hover_sound!");
         }
     }
 
-    void Update()
+    private void Update()
     {
         GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
 
@@ -32,6 +32,15 @@ public class MenuNavigationSound : MonoBehaviour
                 audioSource.PlayOneShot(hoverSound);
             }
             lastSelected = currentSelected;
+        }
+    }
+
+    // Реалізація методу для обробки події наведеного курсору
+    public void OnPointerEnter()
+    {
+        if (hoverSound != null)
+        {
+            audioSource.PlayOneShot(hoverSound);
         }
     }
 }
