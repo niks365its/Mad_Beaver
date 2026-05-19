@@ -38,7 +38,7 @@ public class TrapTree : MonoBehaviour
             if (playerRb != null)
             {
                 Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
-                playerRb.velocity = Vector2.zero; // Скидаємо поточну швидкість
+                playerRb.linearVelocity = Vector2.zero; // Скидаємо поточну швидкість
                 playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
             }
             StartCoroutine(OnSquirrelAnimationEnd()); // Запускаємо корутину для відпрацювання анімаці�� зубра

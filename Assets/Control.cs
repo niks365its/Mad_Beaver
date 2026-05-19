@@ -198,7 +198,7 @@ public class Control : MonoBehaviour
         transform.localScale = scale;
 
         //  animator.SetBool("IsJump", false);
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
     private void stopLeft(InputAction.CallbackContext context)
     {
@@ -216,7 +216,7 @@ public class Control : MonoBehaviour
         scale.x = 0.25f; // Змінюємо знак по осі X
         transform.localScale = scale;
         // animator.SetBool("IsJump", false);
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     private void stopRight(InputAction.CallbackContext context)
@@ -233,7 +233,7 @@ public class Control : MonoBehaviour
         if (isWater || isGrounded) // Only jump if grounded
         {
 
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce + addForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce + addForce);
 
             // audioSource.Stop();
             // audioSource.PlayOneShot(jumpSound);
@@ -245,7 +245,7 @@ public class Control : MonoBehaviour
             // Відтворюємо звук стрибка
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
 
-            Debug.Log("Force is: " + rb.velocity);
+            Debug.Log("Force is: " + rb.linearVelocity);
         }
     }
 
@@ -278,7 +278,7 @@ public class Control : MonoBehaviour
         if (isWater || isGrounded) // Only jump if grounded
         {
             float direction = transform.localScale.x > 0 ? 1f : -1f;
-            rb.velocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
+            rb.linearVelocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
             // audioSource.Stop();
             // audioSource.PlayOneShot(jumpSound);
 
@@ -288,7 +288,7 @@ public class Control : MonoBehaviour
             // Відтворюємо звук стрибка
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
 
-            Debug.Log("Force is: " + rb.velocity);
+            Debug.Log("Force is: " + rb.linearVelocity);
         }
     }
 
@@ -314,7 +314,7 @@ public class Control : MonoBehaviour
             {
                 // Визначаємо напрямок кидка залежно від напряму персонажа
                 float direction = transform.localScale.x > 0 ? 1f : -1f;
-                rb.velocity = new Vector2(throwForce * direction, 0);
+                rb.linearVelocity = new Vector2(throwForce * direction, 0);
 
                 if (isWater)
                 {
@@ -420,7 +420,7 @@ public class Control : MonoBehaviour
             //SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
 
             // Додатково: зупинити рух або інші дії персонажа
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
             // GetComponent<PlayerMovement>().enabled = false; // Якщо є скрипт руху
 
             // Скидання життів до 3

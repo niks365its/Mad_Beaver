@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class LevelMenus : MonoBehaviour
 {
@@ -25,10 +26,20 @@ public class LevelMenus : MonoBehaviour
             }
 
             GameObject topImage = btn.transform.Find("topImage")?.gameObject;
+            // Пошук TMP тексту "LevelName"
+            TMP_Text levelNameText = btn.transform.Find("LevelName")?.GetComponent<TMP_Text>();
 
             if (info.sceneIndex > reachedSceneIndex)
             {
                 if (topImage != null) topImage.SetActive(true);
+
+                // Прозорість тексту 30%
+                if (levelNameText != null)
+                {
+                    Color color = levelNameText.color;
+                    color.a = 0.3f;
+                    levelNameText.color = color;
+                }
 
                 // Відключення EventTrigger
                 EventTrigger eventTrigger = btn.GetComponent<EventTrigger>();
@@ -43,7 +54,15 @@ public class LevelMenus : MonoBehaviour
             {
                 if (topImage != null) topImage.SetActive(false);
 
-                // Відключення EventTrigger
+                // Повернення нормальної прозорості
+                if (levelNameText != null)
+                {
+                    Color color = levelNameText.color;
+                    color.a = 1f;
+                    levelNameText.color = color;
+                }
+
+                // Включення EventTrigger
                 EventTrigger eventTrigger = btn.GetComponent<EventTrigger>();
                 if (eventTrigger != null)
                 {

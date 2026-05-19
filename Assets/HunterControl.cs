@@ -105,7 +105,7 @@ public class HunterControl : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Обчислення кута
 
         GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.Euler(0, 0, angle + 90));
-        bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
+        bullet.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletSpeed;
         animator.SetBool("IsHunterAttack", true);
         StartCoroutine(ResetAttackAnim());
     }

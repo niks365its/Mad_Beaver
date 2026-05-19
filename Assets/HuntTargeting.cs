@@ -33,7 +33,7 @@ public class TurretFollow : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, 0, 0);
                 if (isPike)
                 {
-                    rb.velocity = Vector2.zero; // Зупинити рух
+                    rb.linearVelocity = Vector2.zero; // Зупинити рух
                 }
                 return;
             }
@@ -50,13 +50,13 @@ public class TurretFollow : MonoBehaviour
 
                 float velocityY = Mathf.Clamp(deltaY * 5f, -speed, speed); // Можеш підлаштувати множник (5f)
 
-                rb.velocity = new Vector2(0, velocityY);
+                rb.linearVelocity = new Vector2(0, velocityY);
             }
         }
         else
         {
             if (isPike)
-                rb.velocity = Vector2.zero; // Якщо цілі немає або не атакує — стоїмо
+                rb.linearVelocity = Vector2.zero; // Якщо цілі немає або не атакує — стоїмо
         }
     }
 }
