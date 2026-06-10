@@ -14,6 +14,8 @@ public class Control3 : MonoBehaviour
 
     private bool isMoveLeft = false;
     private bool isMoveRight = false;
+    private bool isForward = false;
+    private bool isBackward = false;
     //private bool isJumping;
     private bool isGrounded = false;
     public bool isWater = false;
@@ -45,7 +47,7 @@ public class Control3 : MonoBehaviour
     private float previousY;
     private float addForce = 0f;
 
-
+    public float forwardSpeed = 3f;
 
     private float lastThrowTime = 0f;
     private float throwCooldown = 0.3f; // Час між кидками
@@ -60,13 +62,14 @@ public class Control3 : MonoBehaviour
     {
         input = new Input();
 
-        input.player.Left.performed += moveLeft;
-        input.player.Left.canceled += stopLeft;
-        input.player.Right.performed += moveRight;
-        input.player.Right.canceled += stopRight;
-        input.player.Jump.performed += onJump;
-        input.player.Down.performed += onDown;
-        input.player.Down.canceled += onStopDown;
+        input.player.Left.performed += onBackward;
+        input.player.Left.canceled += onStopBackward;
+        input.player.Right.performed += onForward;
+        input.player.Right.canceled += onStopForward;
+        input.player.Jump.performed += moveLeft;
+        input.player.Jump.canceled += stopLeft;
+        input.player.Down.performed += moveRight;
+        input.player.Down.canceled += stopRight;
         input.player.AngleJump.performed += onAngleJump;
         input.player.Throw.performed += stickFly;
         // input.player.Throw.canceled += stickNoFly;
@@ -77,6 +80,7 @@ public class Control3 : MonoBehaviour
 
     private void Start()
     {
+        animator.SetBool("IsJump3", false);
         SoundManager.Instance.StopEffectsSound();
         rb = GetComponent<Rigidbody2D>();
         defaultGravity = 0;//rb.gravityScale;
@@ -101,15 +105,19 @@ public class Control3 : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        float currentSpeed = forwardSpeed;
+        //Постійний рух вперед
+
+
         if (isMoveLeft)
         {
             transform.position += Vector3.up * 5 * Time.deltaTime;
 
-            if (isGrounded)
-            {
-                animator.SetBool("IsGo", true);
-                SoundManager.Instance.PlayWalkSound();
-            }
+            // if (isGrounded)
+            // {
+            //     animator.SetBool("IsGo", true);
+            //     SoundManager.Instance.PlayWalkSound();
+            // }
 
         }
 
@@ -118,48 +126,74 @@ public class Control3 : MonoBehaviour
         {
             transform.position += Vector3.down * 5 * Time.deltaTime;
 
-            if (isGrounded)
-            {
-                animator.SetBool("IsGo", true);
-                SoundManager.Instance.PlayWalkSound();
-            }
+            // if (isGrounded)
+            // {
+            //     animator.SetBool("IsGo", true);
+            //     SoundManager.Instance.PlayWalkSound();
+            // }
         }
-        if (!isWater)
+
+        if (isForward)
         {
-            // Зчитування поточної позиції по осі Y
-            float currentY = transform.position.y;
+            currentSpeed = forwardSpeed * 1.5f;
 
-            // Перевірка напрямку переміщення
-            if (currentY > previousY + 0.001f)
-            {
-                addForce = 2f;
-            }
-            else if (currentY < previousY - 0.001f)
-            {
-                addForce = -2f;
-            }
-
-            else
-            {
-                addForce = 0f;
-            }
-
-            // Оновлення попередньої позиції
-            previousY = currentY;
-
+            // if (isGrounded)
+            // {
+            //     animator.SetBool("IsGo", true);
+            //     SoundManager.Instance.PlayWalkSound();
+            // }
         }
 
-        if (isWater)
+        if (isBackward)
         {
-            // Обчислюємо швидкість персонажа (напрямок руху)
-            Vector2 currentPosition = transform.position;
-            Vector2 velocity = (currentPosition - previousPosition) / Time.deltaTime;
+            currentSpeed = forwardSpeed * 0.5f;
 
-            previousPosition = currentPosition;
+            Debug.Log("BackSpeed is" + transform.position);
 
-            // Використовуємо горизонтальну швидкість для зміни orbitalY
-            velocityModule.x = velocity.x * -1f; // -4f для масштабування ефекту
+            // if (isGrounded)
+            // {
+            //     animator.SetBool("IsGo", true);
+            //     SoundManager.Instance.PlayWalkSound();
+            // }
         }
+
+        transform.position += Vector3.right * currentSpeed * Time.deltaTime;
+        // if (!isWater)
+        // {
+        //     // Зчитування поточної позиції по осі Y
+        //     float currentY = transform.position.y;
+
+        //     // Перевірка напрямку переміщення
+        //     if (currentY > previousY + 0.001f)
+        //     {
+        //         addForce = 2f;
+        //     }
+        //     else if (currentY < previousY - 0.001f)
+        //     {
+        //         addForce = -2f;
+        //     }
+
+        //     else
+        //     {
+        //         addForce = 0f;
+        //     }
+
+        //     // Оновлення попередньої позиції
+        //     previousY = currentY;
+
+        // }
+
+        // if (isWater)
+        // {
+        //     // Обчислюємо швидкість персонажа (напрямок руху)
+        //     Vector2 currentPosition = transform.position;
+        //     Vector2 velocity = (currentPosition - previousPosition) / Time.deltaTime;
+
+        //     previousPosition = currentPosition;
+
+        //     // Використовуємо горизонтальну швидкість для зміни orbitalY
+        //     velocityModule.x = velocity.x * -1f; // -4f для масштабування ефекту
+        // }
     }
 
     private void OnEnable()
@@ -194,11 +228,11 @@ public class Control3 : MonoBehaviour
     {
         isMoveLeft = true;
         Vector3 scale = transform.localScale;
-        scale.y = -0.25f; // Змінюємо знак по осі X
+        scale.y = -Mathf.Abs(scale.y); // Змінюємо знак по осі Y
         transform.localScale = scale;
 
         //  animator.SetBool("IsJump", false);
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        // rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
     private void stopLeft(InputAction.CallbackContext context)
     {
@@ -213,10 +247,10 @@ public class Control3 : MonoBehaviour
     {
         isMoveRight = true;
         Vector3 scale = transform.localScale;
-        scale.y = 0.25f; // Змінюємо знак по осі X
+        scale.y = Mathf.Abs(scale.y); // Змінюємо знак по осі Y
         transform.localScale = scale;
         // animator.SetBool("IsJump", false);
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        // rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     private void stopRight(InputAction.CallbackContext context)
@@ -228,71 +262,99 @@ public class Control3 : MonoBehaviour
     }
 
 
-    public void onJump(InputAction.CallbackContext context)
+    public void onForward(InputAction.CallbackContext context)
     {
-        if (isWater || isGrounded) // Only jump if grounded
-        {
+        isForward = true;
 
-            rb.linearVelocity = new Vector2(rb.linearVelocity.y, jumpForce + addForce);
+        // if (isWater || isGrounded) // Only jump if grounded
+        // {
 
-            // audioSource.Stop();
-            // audioSource.PlayOneShot(jumpSound);
+        //     rb.linearVelocity = new Vector2(rb.linearVelocity.y, jumpForce + addForce);
 
-            // Зупиняємо звук кроків перед стрибком
-            SoundManager.Instance.StopWalkSound();
+        //     // audioSource.Stop();
+        //     // audioSource.PlayOneShot(jumpSound);
+
+        //     // Зупиняємо звук кроків перед стрибком
+        //     SoundManager.Instance.StopWalkSound();
 
 
-            // Відтворюємо звук стрибка
-            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+        //     // Відтворюємо звук стрибка
+        //     SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
 
-            Debug.Log("Force is: " + rb.linearVelocity);
-        }
+        //     Debug.Log("Force is: " + rb.linearVelocity);
+        // }
     }
 
-    public void onDown(InputAction.CallbackContext context)
+    public void onStopForward(InputAction.CallbackContext context)
     {
-        if (isWater)
-        {
-            rb.gravityScale = gravity;
-
-            animator.SetBool("IsSwim", false);
-
-            // Зупиняємо звук кроків перед стрибком
-            SoundManager.Instance.StopWalkSound();
-
-
-            // Відтворюємо звук стрибка
-            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
-        }
+        isForward = false;
+        // if (isWater)
+        //     rb.gravityScale = defaultGravity;
+        animator.SetBool("IsSwim", true);
     }
 
-    public void onStopDown(InputAction.CallbackContext context)
+    public void onBackward(InputAction.CallbackContext context)
     {
-        if (isWater)
-            rb.gravityScale = defaultGravity;
+        isBackward = true;
+        // if (isWater)
+        // {
+        //     rb.gravityScale = gravity;
+
+        //     animator.SetBool("IsSwim", false);
+
+        //     // Зупиняємо звук кроків перед стрибком
+        //     SoundManager.Instance.StopWalkSound();
+
+
+        //     // Відтворюємо звук стрибка
+        //     SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+        // }
+    }
+
+    public void onStopBackward(InputAction.CallbackContext context)
+    {
+        isBackward = false;
+        // if (isWater)
+        //     rb.gravityScale = defaultGravity;
         animator.SetBool("IsSwim", true);
     }
 
     public void onAngleJump(InputAction.CallbackContext context)
     {
-        if (isWater || isGrounded) // Only jump if grounded
-        {
-            float direction = transform.localScale.x > 0 ? 1f : -1f;
-            rb.linearVelocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
-            // audioSource.Stop();
-            // audioSource.PlayOneShot(jumpSound);
 
-            // Зупиняємо звук кроків перед стрибком
-            SoundManager.Instance.StopWalkSound();
+        // float direction = transform.localScale.x > 0 ? 1f : -1f;
+        // rb.linearVelocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
+        // audioSource.Stop();
+        // audioSource.PlayOneShot(jumpSound);
+        animator.SetBool("IsJump3", true);
+        StartCoroutine(DisableColliderCoroutine());
 
-            // Відтворюємо звук стрибка
-            SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+        Debug.Log("IsJump is: " + animator.GetBool("IsJump"));
 
-            Debug.Log("Force is: " + rb.linearVelocity);
-        }
+        // Зупиняємо звук кроків перед стрибком
+        SoundManager.Instance.StopWalkSound();
+
+        // Відтворюємо звук стрибка
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
+
+        Debug.Log("Force is: " + rb.linearVelocity);
+
     }
 
+    private IEnumerator DisableColliderCoroutine()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
 
+        if (col != null)
+        {
+            col.enabled = false;
+
+            yield return new WaitForSeconds(2f);
+            col.enabled = true;
+            animator.SetBool("IsJump3", false);
+            Debug.Log("IsJump is: " + animator.GetBool("IsJump"));
+        }
+    }
 
     public void stickFly(InputAction.CallbackContext context)
     {
@@ -373,7 +435,7 @@ public class Control3 : MonoBehaviour
             if (groundContacts == 1) // Якщо це перший контакт із землею, то вважаємо персонажа приземленим
             {
                 isGrounded = true;
-                animator.SetBool("IsJump", false);
+                //  animator.SetBool("IsJump", false);
 
             }
         }
@@ -391,7 +453,7 @@ public class Control3 : MonoBehaviour
                 isGrounded = false;
                 if (!isWater)
                 {
-                    animator.SetBool("IsJump", true);
+                    // animator.SetBool("IsJump", true);
                 }
                 else if (isWater)
                 {
@@ -495,7 +557,7 @@ public class Control3 : MonoBehaviour
     public void TouchJump()
     {
         var fakeContext = new InputAction.CallbackContext();
-        onJump(fakeContext);
+        // onJump(fakeContext);
     }
 
     public void TouchThrow()
