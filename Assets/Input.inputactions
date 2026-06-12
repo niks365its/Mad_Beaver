@@ -84,6 +84,17 @@
                 },
                 {
                     "name": "",
+                    "id": "132a4355-ab70-4ae3-81c1-2bafcd2484e5",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6bbc1678-faa7-4dc2-bd62-efc5365aea88",
                     "path": "<Keyboard>/leftArrow",
                     "interactions": "",
@@ -128,6 +139,17 @@
                 },
                 {
                     "name": "",
+                    "id": "78f69392-5450-453c-ba77-9420d6d9f71b",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ec0e534f-0786-43e0-80a6-0910fe33690a",
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
@@ -163,6 +185,17 @@
                     "name": "",
                     "id": "3115fcc3-b7b8-45d3-89dc-a59eaeac3e96",
                     "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1935b2a8-9913-40ab-9d18-64d9d55ac2e3",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

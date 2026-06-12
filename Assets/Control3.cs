@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -16,7 +15,6 @@ public class Control3 : MonoBehaviour
     private bool isMoveRight = false;
     private bool isForward = false;
     private bool isBackward = false;
-    //private bool isJumping;
     private bool isGrounded = false;
     public bool isWater = false;
 
@@ -34,13 +32,15 @@ public class Control3 : MonoBehaviour
     public float jumpForce = 5f;
     public float pauseTime = 5f;
 
+    public float minY = -3f;
+    public float maxY = 3f;
+
     public float gravity = 1f;
     private float defaultGravity;
 
     public GameObject stickPrefab; // Префаб камінчика
     public Transform throwPoint;  // Точка, з якої кидатиметься камінчик
     public float throwForce = 10f; // Сила кидка
-                                   //  private bool IsStickFly;
     private int groundContacts = 0;
     public Text firewoodText;
 
@@ -56,9 +56,7 @@ public class Control3 : MonoBehaviour
     public ParticleSystem bubbleSystem; // Посилання на систему частинок
     private ParticleSystem.VelocityOverLifetimeModule velocityModule;
 
-    // Start is called before the first frame update
     void Awake()
-
     {
         input = new Input();
 
@@ -72,10 +70,6 @@ public class Control3 : MonoBehaviour
         input.player.Down.canceled += stopRight;
         input.player.AngleJump.performed += onAngleJump;
         input.player.Throw.performed += stickFly;
-        // input.player.Throw.canceled += stickNoFly;
-
-
-
     }
 
     private void Start()
@@ -83,13 +77,12 @@ public class Control3 : MonoBehaviour
         animator.SetBool("IsJump3", false);
         SoundManager.Instance.StopEffectsSound();
         rb = GetComponent<Rigidbody2D>();
-        defaultGravity = 0;//rb.gravityScale;
+        defaultGravity = 0;
 
         animator = GetComponent<Animator>();
 
         previousY = transform.position.y;
 
-        // audioSource.PlayOneShot(startSound);
         GlobalResources.Firewood = 0;
 
         SoundManager.Instance.PlayBackgroundMusic(SoundManager.Instance.backgroundSound);
@@ -101,47 +94,27 @@ public class Control3 : MonoBehaviour
         Debug.Log("touchScreen is: (for start)" + TouchControlsManager.Instance.IsTouch);
     }
 
-
-    // Update is called once per frame
     private void Update()
     {
         float currentSpeed = forwardSpeed;
-        //Постійний рух вперед
-
 
         if (isMoveLeft)
         {
             transform.position += Vector3.up * 5 * Time.deltaTime;
-
-            // if (isGrounded)
-            // {
-            //     animator.SetBool("IsGo", true);
-            //     SoundManager.Instance.PlayWalkSound();
-            // }
-
         }
-
 
         if (isMoveRight)
         {
             transform.position += Vector3.down * 5 * Time.deltaTime;
-
-            // if (isGrounded)
-            // {
-            //     animator.SetBool("IsGo", true);
-            //     SoundManager.Instance.PlayWalkSound();
-            // }
         }
+
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Clamp(pos.y, minY, maxY);
+        transform.position = pos;
 
         if (isForward)
         {
             currentSpeed = forwardSpeed * 1.5f;
-
-            // if (isGrounded)
-            // {
-            //     animator.SetBool("IsGo", true);
-            //     SoundManager.Instance.PlayWalkSound();
-            // }
         }
 
         if (isBackward)
@@ -149,51 +122,9 @@ public class Control3 : MonoBehaviour
             currentSpeed = forwardSpeed * 0.5f;
 
             Debug.Log("BackSpeed is" + transform.position);
-
-            // if (isGrounded)
-            // {
-            //     animator.SetBool("IsGo", true);
-            //     SoundManager.Instance.PlayWalkSound();
-            // }
         }
 
         transform.position += Vector3.right * currentSpeed * Time.deltaTime;
-        // if (!isWater)
-        // {
-        //     // Зчитування поточної позиції по осі Y
-        //     float currentY = transform.position.y;
-
-        //     // Перевірка напрямку переміщення
-        //     if (currentY > previousY + 0.001f)
-        //     {
-        //         addForce = 2f;
-        //     }
-        //     else if (currentY < previousY - 0.001f)
-        //     {
-        //         addForce = -2f;
-        //     }
-
-        //     else
-        //     {
-        //         addForce = 0f;
-        //     }
-
-        //     // Оновлення попередньої позиції
-        //     previousY = currentY;
-
-        // }
-
-        // if (isWater)
-        // {
-        //     // Обчислюємо швидкість персонажа (напрямок руху)
-        //     Vector2 currentPosition = transform.position;
-        //     Vector2 velocity = (currentPosition - previousPosition) / Time.deltaTime;
-
-        //     previousPosition = currentPosition;
-
-        //     // Використовуємо горизонтальну швидкість для зміни orbitalY
-        //     velocityModule.x = velocity.x * -1f; // -4f для масштабування ефекту
-        // }
     }
 
     private void OnEnable()
@@ -221,7 +152,6 @@ public class Control3 : MonoBehaviour
         {
             screenController.SetActive(false);
         }
-
     }
 
     private void moveLeft(InputAction.CallbackContext context)
@@ -230,17 +160,13 @@ public class Control3 : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.y = -Mathf.Abs(scale.y); // Змінюємо знак по осі Y
         transform.localScale = scale;
-
-        //  animator.SetBool("IsJump", false);
-        // rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
+
     private void stopLeft(InputAction.CallbackContext context)
     {
         isMoveLeft = false;
         animator.SetBool("IsGo", false);
-        // audioSource.Stop();
         SoundManager.Instance.StopWalkSound();
-
     }
 
     private void moveRight(InputAction.CallbackContext context)
@@ -249,83 +175,39 @@ public class Control3 : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.y = Mathf.Abs(scale.y); // Змінюємо знак по осі Y
         transform.localScale = scale;
-        // animator.SetBool("IsJump", false);
-        // rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     private void stopRight(InputAction.CallbackContext context)
     {
         isMoveRight = false;
         animator.SetBool("IsGo", false);
-        // audioSource.Stop();
         SoundManager.Instance.StopWalkSound();
     }
-
 
     public void onForward(InputAction.CallbackContext context)
     {
         isForward = true;
-
-        // if (isWater || isGrounded) // Only jump if grounded
-        // {
-
-        //     rb.linearVelocity = new Vector2(rb.linearVelocity.y, jumpForce + addForce);
-
-        //     // audioSource.Stop();
-        //     // audioSource.PlayOneShot(jumpSound);
-
-        //     // Зупиняємо звук кроків перед стрибком
-        //     SoundManager.Instance.StopWalkSound();
-
-
-        //     // Відтворюємо звук стрибка
-        //     SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
-
-        //     Debug.Log("Force is: " + rb.linearVelocity);
-        // }
     }
 
     public void onStopForward(InputAction.CallbackContext context)
     {
         isForward = false;
-        // if (isWater)
-        //     rb.gravityScale = defaultGravity;
         animator.SetBool("IsSwim", true);
     }
 
     public void onBackward(InputAction.CallbackContext context)
     {
         isBackward = true;
-        // if (isWater)
-        // {
-        //     rb.gravityScale = gravity;
-
-        //     animator.SetBool("IsSwim", false);
-
-        //     // Зупиняємо звук кроків перед стрибком
-        //     SoundManager.Instance.StopWalkSound();
-
-
-        //     // Відтворюємо звук стрибка
-        //     SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
-        // }
     }
 
     public void onStopBackward(InputAction.CallbackContext context)
     {
         isBackward = false;
-        // if (isWater)
-        //     rb.gravityScale = defaultGravity;
         animator.SetBool("IsSwim", true);
     }
 
     public void onAngleJump(InputAction.CallbackContext context)
     {
-
-        // float direction = transform.localScale.x > 0 ? 1f : -1f;
-        // rb.linearVelocity = new Vector2(jumpForce * 0.6f * direction, (jumpForce + addForce) * 1.2f);
-        // audioSource.Stop();
-        // audioSource.PlayOneShot(jumpSound);
         animator.SetBool("IsJump3", true);
         StartCoroutine(DisableColliderCoroutine());
 
@@ -338,7 +220,6 @@ public class Control3 : MonoBehaviour
         SoundManager.Instance.PlayOneShot(SoundManager.Instance.jumpSound);
 
         Debug.Log("Force is: " + rb.linearVelocity);
-
     }
 
     private IEnumerator DisableColliderCoroutine()
@@ -361,12 +242,10 @@ public class Control3 : MonoBehaviour
         StartCoroutine(ThrowAnimation());
         if (GlobalResources.Firewood > 0)
         {
-            //  audioSource.PlayOneShot(hitSound);
             if (Time.time - lastThrowTime < throwCooldown)
                 return; // Якщо ще не минуло 0.5 секунди, виходимо
 
             lastThrowTime = Time.time; // Оновлюємо час останнього кидка
-            // animator.SetBool("IsThrow", true);
 
             // Створюємо stick у точці кидка
             GameObject stick = Instantiate(stickPrefab, throwPoint.position, throwPoint.rotation);
@@ -388,15 +267,12 @@ public class Control3 : MonoBehaviour
                 firewoodText.text = "" + GlobalResources.Firewood;
 
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
-
             }
         }
         else
         {
             firewoodText.text = "X";
-            //  audioSource.PlayOneShot(hitFailSound);
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.emptyStickSound);
-
         }
     }
 
@@ -407,65 +283,44 @@ public class Control3 : MonoBehaviour
         animator.SetBool("IsThrow", false);
     }
 
-    // public void stickNoFly(InputAction.CallbackContext context)
-    // {
-    //     animator.SetBool("IsThrow", false);
-    // }
-
     public void OnPause()
     {
-        //animator.SetBool("IsThrow", false);
         animator.SetBool("pause", true);
     }
 
     public void EndPause()
     {
         animator.SetBool("pause", false);
-
     }
-
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-
-
         if (collision.gameObject.CompareTag("Ground"))
         {
             groundContacts++;
             if (groundContacts == 1) // Якщо це перший контакт із землею, то вважаємо персонажа приземленим
             {
                 isGrounded = true;
-                //  animator.SetBool("IsJump", false);
-
             }
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-
-
         if (collision.gameObject.CompareTag("Ground") && !isGameOver)
         {
             groundContacts--;
             if (groundContacts <= 0) // Якщо всі контакти зникли, то персонаж у повітрі
             {
                 isGrounded = false;
-                if (!isWater)
-                {
-                    // animator.SetBool("IsJump", true);
-                }
-                else if (isWater)
+                if (isWater)
                 {
                     animator.SetBool("IsSwim", true);
                 }
                 animator.SetBool("IsGo", false);
                 SoundManager.Instance.StopWalkSound();
-
             }
         }
-
-
     }
 
     public void TriggerGameOver()
@@ -473,25 +328,20 @@ public class Control3 : MonoBehaviour
         if (!isGameOver)
         {
             screenController.SetActive(false);
-            // SoundManager.Instance.StopEffectsSound();
             isGameOver = true;
             isGrounded = true;
             animator.SetBool("IsSwim", false);
 
             animator.SetBool("IsDead", true);
-            //SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
 
             // Додатково: зупинити рух або інші дії персонажа
             GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-            // GetComponent<PlayerMovement>().enabled = false; // Якщо є скрипт руху
 
             // Скидання життів до 3
             HealthBar.life = 3; // Оновлення статичної змінної
             StartCoroutine(GameOverMenu());
         }
     }
-
-
 
     public IEnumerator GameOverMenu()
     {
@@ -504,7 +354,6 @@ public class Control3 : MonoBehaviour
         gameOverMenu.SetActive(true);
         SoundManager.Instance.PlayOneShot(SoundManager.Instance.gameOverSound);
         Player.SetActive(false);
-
     }
 
     public void RestartGame()
@@ -524,7 +373,6 @@ public class Control3 : MonoBehaviour
     {
         // Закриваємо гру (працює тільки у збірці)
         Application.Quit();
-        // Для редактора:
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
@@ -557,7 +405,6 @@ public class Control3 : MonoBehaviour
     public void TouchJump()
     {
         var fakeContext = new InputAction.CallbackContext();
-        // onJump(fakeContext);
     }
 
     public void TouchThrow()
