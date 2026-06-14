@@ -121,7 +121,7 @@ public class Control3 : MonoBehaviour
         {
             currentSpeed = forwardSpeed * 0.5f;
 
-            Debug.Log("BackSpeed is" + transform.position);
+            Debug.Log("BackSpeed is" + currentSpeed);
         }
 
         transform.position += Vector3.right * currentSpeed * Time.deltaTime;
@@ -224,17 +224,13 @@ public class Control3 : MonoBehaviour
 
     private IEnumerator DisableColliderCoroutine()
     {
-        BoxCollider2D col = GetComponent<BoxCollider2D>();
 
-        if (col != null)
-        {
-            col.enabled = false;
+        gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
+        yield return new WaitForSeconds(2f);
+        gameObject.layer = LayerMask.NameToLayer("Player");
+        animator.SetBool("IsJump3", false);
+        Debug.Log("IsJump is: " + animator.GetBool("IsJump"));
 
-            yield return new WaitForSeconds(2f);
-            col.enabled = true;
-            animator.SetBool("IsJump3", false);
-            Debug.Log("IsJump is: " + animator.GetBool("IsJump"));
-        }
     }
 
     public void stickFly(InputAction.CallbackContext context)

@@ -3,116 +3,222 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HunterControl3 : MonoBehaviour
+
+
 {
-    public Transform pointA;
-    public Transform pointB;
-    public float speed = 2f;
-    private Transform target;
+    public enum State
+    {
+        Patrol,
+        Detect,
+        Chase,
+        Attack
+    }
 
-    public GameObject projectile;
-    public Transform firePoint;
-    public Transform hunter;
-    private Transform player; // Посилання на гравця
+    [Header("Movement")]
+    public float patrolSpeed = 2f;
+    public float chaseSpeed = 3.5f;
+    public Transform[] patrolPoints;
+
+    [Header("Combat")]
+    public float attackRange = 1.5f;
+    public float detectRange = 5f;
     public float attackCooldown = 2f;
-    private float cooldownTimer;
-    public bool isPike = false; // ��кщо ворог - щука
-
-    public Animator animator;
-    private int dir = 1;
-
-    private bool isAttacking = false;
-    public bool IsAttacking => isAttacking;
-
     public float bulletSpeed = 5f;
 
-    void Start()
-    {
-        if (isPike)
-        {
-            dir = -1;
-        }
+    [Header("Refs")]
+    public Transform firePoint;
+    public Transform detectionPoint;
+    public GameObject projectile;
+    public Animator animator;
 
-        target = pointA;
-        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Hunter"), LayerMask.NameToLayer("Player"), true);
-    }
+    private Transform player;
+    private State state;
+    private int patrolIndex;
+    private float cooldownTimer;
 
     void Update()
     {
-
-
-        // if (!isAttacking)
-        // {
-        transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
-
-        Vector3 direction = target.position - transform.position;
-
-
-        if (direction.x != 0)
-        {
-
-            Vector3 currentScale = transform.localScale;
-            currentScale.x = Mathf.Abs(currentScale.x) * Mathf.Sign(dir * direction.x);
-            transform.localScale = currentScale;
-        }
-
-        if (Vector2.Distance(transform.position, target.position) < 0.1f)
-        {
-            target = target == pointA ? pointB : pointA;
-        }
-        //  }
-        if (player != null && cooldownTimer <= 0f)
-        {
-            Attack();
-            cooldownTimer = attackCooldown;
-        }
+        Debug.Log($"wwwState: {state}, Player: {(player ? player.name : "NULL")}");
 
         cooldownTimer -= Time.deltaTime;
+
+        switch (state)
+        {
+            case State.Patrol:
+                Patrol();
+                break;
+
+            case State.Detect:
+                Detect();
+                break;
+
+            case State.Chase:
+                Chase();
+                break;
+
+            case State.Attack:
+                AttackState();
+                break;
+        }
     }
 
-    void OnTriggerStay2D(Collider2D other)
+    #region STATES
+
+    void Patrol()
+    {
+        Transform target = patrolPoints[patrolIndex];
+
+        MoveTo(target.position, patrolSpeed);
+
+        if (Vector2.Distance(transform.position, target.position) < 0.2f)
+        {
+            patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
+        }
+
+        if (player != null &&
+            Vector2.Distance(transform.position, player.position) <= detectRange)
+        {
+            state = State.Detect;
+        }
+    }
+
+    void Detect()
+    {
+        if (player == null)
+        {
+            state = State.Patrol;
+            return;
+        }
+
+        if (Vector2.Distance(transform.position, player.position) <= detectRange)
+        {
+            state = State.Chase;
+        }
+        else
+        {
+            state = State.Patrol;
+        }
+    }
+
+    void Chase()
+    {
+        if (player == null)
+        {
+            state = State.Patrol;
+            return;
+        }
+
+        float dist = Vector2.Distance(transform.position, player.position);
+
+        MoveTo(player.position, chaseSpeed);
+
+        if (dist <= attackRange)
+        {
+            state = State.Attack;
+        }
+
+        if (dist > detectRange)
+        {
+            state = State.Patrol;
+        }
+    }
+
+    void AttackState()
+    {
+        if (player == null)
+        {
+            state = State.Patrol;
+            return;
+        }
+
+        float dist = Vector2.Distance(detectionPoint.position, player.position);
+
+        FacePlayer();
+
+        if (dist > attackRange)
+        {
+            state = State.Chase;
+            return;
+        }
+
+        if (cooldownTimer <= 0f)
+        {
+            DoAttack();
+            cooldownTimer = attackCooldown;
+        }
+    }
+
+    #endregion
+
+    #region ACTIONS
+
+    void MoveTo(Vector3 target, float speed)
+    {
+        transform.position = Vector2.MoveTowards(
+            transform.position,
+            target,
+            speed * Time.deltaTime
+        );
+
+        FaceDirection(target);
+    }
+
+    void FaceDirection(Vector3 target)
+    {
+        Vector3 dir = target - transform.position;
+
+        if (dir.x == 0) return;
+
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(dir.x);
+        transform.localScale = scale;
+    }
+
+    void FacePlayer()
+    {
+        if (player == null) return;
+        FaceDirection(player.position);
+    }
+
+    void DoAttack()
+    {
+        animator.SetBool("IsHunterAttack", true);
+        StartCoroutine(ResetAnim());
+
+        Vector2 dir = ((Vector2)player.position - (Vector2)firePoint.position).normalized;
+
+        GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.identity);
+        bullet.GetComponent<Rigidbody2D>().linearVelocity = dir * bulletSpeed;
+    }
+
+    IEnumerator ResetAnim()
+    {
+        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("IsHunterAttack", false);
+    }
+
+    #endregion
+
+    #region TRIGGERS
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             player = other.transform;
-            isAttacking = true;
-
-            Vector3 playerDirection = player.position - transform.position;
-            if (playerDirection.x != 0)
-            {
-                // transform.localScale = new Vector3(Mathf.Sign(playerDirection.x), 1, 1);
-                Vector3 currentScale = transform.localScale;
-                currentScale.x = Mathf.Abs(currentScale.x) * Mathf.Sign(dir * playerDirection.x);
-                transform.localScale = currentScale;
-            }
-
-
         }
+
+        Debug.Log("wwwENTER: " + other.name);
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            isAttacking = false;
-            // animator.SetBool("IsHunterAttack", false);
+            player = null;
+            state = State.Patrol;
         }
     }
-    void Attack()
-    {
-        SoundManager.Instance.PlayOneShot(SoundManager.Instance.shotSound);
 
-        Vector2 direction = ((Vector2)player.position - (Vector2)firePoint.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Обчислення кута
-
-        GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.Euler(0, 0, angle + 90));
-        bullet.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletSpeed;
-        animator.SetBool("IsHunterAttack", true);
-        StartCoroutine(ResetAttackAnim());
-    }
-
-    IEnumerator ResetAttackAnim()
-    {
-        yield return new WaitForSeconds(0.6f); // час залежить від вашої анімації
-        animator.SetBool("IsHunterAttack", false);
-    }
+    #endregion
 }
