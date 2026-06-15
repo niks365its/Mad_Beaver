@@ -12,6 +12,7 @@ TagManager:
   - pirahna
   - AirBubble
   - wallBalk
+  - Obstacle
   layers:
   - Default
   - TransparentFX
