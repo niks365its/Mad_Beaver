@@ -14,7 +14,7 @@ public class HomeScript : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Control player = collision.GetComponent<Control>();
+            Control3 player = collision.GetComponent<Control3>();
             if (player != null)
             {
                 home.SetActive(false);

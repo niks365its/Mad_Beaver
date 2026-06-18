@@ -31,7 +31,7 @@ public class Control3 : MonoBehaviour
     private Rigidbody2D rb;
     public float jumpForce = 5f;
     public float pauseTime = 5f;
-
+    public float currentSpeed;
     public float minY = -3f;
     public float maxY = 3f;
 
@@ -96,7 +96,7 @@ public class Control3 : MonoBehaviour
 
     private void Update()
     {
-        float currentSpeed = forwardSpeed;
+        currentSpeed = forwardSpeed;
 
         if (isMoveLeft)
         {
@@ -114,12 +114,12 @@ public class Control3 : MonoBehaviour
 
         if (isForward)
         {
-            currentSpeed = forwardSpeed * 1.5f;
+            currentSpeed = forwardSpeed * 2f;
         }
 
         if (isBackward)
         {
-            currentSpeed = forwardSpeed * 0.5f;
+            currentSpeed = forwardSpeed * 0.3f;
 
             Debug.Log("BackSpeed is" + currentSpeed);
         }

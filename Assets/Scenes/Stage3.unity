@@ -1740,19 +1740,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a40d7418c8ece843a0f9bf2b0d649c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patrolSpeed: 3
-  chaseSpeed: 4
-  patrolPoints:
-  - {fileID: 1706232007}
-  attackRange: 1.85
-  detectRange: 15
+  chaseSpeed: 5
+  attackRange: 0.3
   attackCooldown: 2
   bulletSpeed: 15
+  onPlayerDamage: 10
   firePoint: {fileID: 1522392146}
   detectionPoint: {fileID: 952328262}
   projectile: {fileID: 8562039220202044337, guid: 665eec8108c726e4c8be63931bdeb65d, type: 3}
   animator: {fileID: 163588387}
   crocodileBody: {fileID: 386377390}
+  playerController: {fileID: 3792489843819110693}
 --- !u!114 &163588397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3788,8 +3786,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.74, y: 0.74, z: 0.74}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1822691785}
+  m_Children: []
   m_Father: {fileID: 3792489843819110692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &423436466
@@ -4224,7 +4221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1184666548255417940, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
       propertyPath: m_Radius
-      value: 0.21
+      value: 0.36
       objectReference: {fileID: 0}
     - target: {fileID: 1184666548255417940, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
       propertyPath: m_Enabled
@@ -4370,7 +4367,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6056978145272677597, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5047766445534539652, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
@@ -4387,7 +4385,7 @@ PrefabInstance:
       addedObject: {fileID: 952328262}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6252505922249406439, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
-      insertIndex: 4
+      insertIndex: 3
       addedObject: {fileID: 163588391}
     - targetCorrespondingSourceObject: {fileID: 6252505922249406439, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
       insertIndex: -1
@@ -9762,7 +9760,7 @@ Transform:
   m_GameObject: {fileID: 952328261}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.166, y: 0, z: 0}
+  m_LocalPosition: {x: 2.841, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16645,11 +16643,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d536156d54e7109479b16d439789953e, type: 3}
---- !u!4 &1706232007 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7131522921228318594, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
-  m_PrefabInstance: {fileID: 488654791}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1710223573
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17697,12 +17690,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1822691784}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.586, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.8736396, y: 0, z: 0}
+  m_LocalScale: {x: 0.74, y: 0.74, z: 0.74}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 423436465}
+  m_Father: {fileID: 3792489843819110692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1822691786
 BoxCollider2D:
@@ -20244,7 +20237,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3792489843819110692}
   - component: {fileID: 3792489843819110698}
-  - component: {fileID: 3792489843819110697}
   - component: {fileID: 3792489843819110693}
   - component: {fileID: 3792489843819110696}
   - component: {fileID: 3792489843819110695}
@@ -20270,6 +20262,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1921777272}
+  - {fileID: 1822691785}
   - {fileID: 423436465}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20292,6 +20285,7 @@ MonoBehaviour:
   screenController: {fileID: 586663158}
   jumpForce: 5
   pauseTime: 5
+  currentSpeed: 0
   minY: -5
   maxY: 5
   gravity: 1
@@ -20390,31 +20384,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &3792489843819110697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2623831391478364487}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ebcd236aeb41604cb8a91e5fc1b1b26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isWater: 0
-  animator: {fileID: 3792489843819110698}
-  gameOverMenu: {fileID: 554660729}
-  Player: {fileID: 2623831391478364487}
-  screenController: {fileID: 586663158}
-  jumpForce: 7
-  pauseTime: 5
-  gravity: 1
-  stickPrefab: {fileID: 3040537458922852468, guid: 2feb12764dc0ca347b80f03301711ab5, type: 3}
-  throwPoint: {fileID: 1921777272}
-  throwForce: 10
-  firewoodText: {fileID: 12894160}
-  bubbleSystem: {fileID: 0}
 --- !u!95 &3792489843819110698
 Animator:
   serializedVersion: 7
