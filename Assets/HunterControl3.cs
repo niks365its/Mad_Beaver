@@ -10,13 +10,15 @@ public class HunterControl3 : MonoBehaviour
     }
 
     [Header("Movement")]
-    public float chaseSpeed = 3.5f;
+    public float hunterSpeed = 3.5f;
+    private float chaseSpeed;
 
     [Header("Combat")]
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
     public float bulletSpeed = 5f;
     public float onPlayerDamage = 10f;
+    public float maxDist = 10f;
 
     [Header("Refs")]
     public Transform firePoint;
@@ -63,19 +65,57 @@ public class HunterControl3 : MonoBehaviour
 
     void Chase()
     {
-        if (player == null)
+        if (player == null || playerController == null)
             return;
 
         float dist = Vector2.Distance(
             detectionPoint.position,
             player.position);
 
-        MoveTo(player.position, chaseSpeed);
+        float playerSpeed = playerController.currentSpeed;
 
+        // Якщо гравець у радіусі атаки — зупиняємо переслідування
         if (dist <= attackRange)
         {
+            if (playerSpeed < hunterSpeed)
+            {
+                chaseSpeed = playerSpeed;
+            }
+            else
+            {
+                chaseSpeed = hunterSpeed;
+            }
+
+            Debug.Log(
+                $"xxxChase Speed: {chaseSpeed:F2}" +
+                $"Player Speed: {playerSpeed:F2}" +
+                $"Distance: {dist:F2}" +
+                $"Attack Range: {attackRange:F2}"
+            );
+
             state = State.Attack;
+            return;
         }
+
+        // Визначаємо швидкість переслідування
+        if (dist >= maxDist)
+        {
+            if (playerSpeed < hunterSpeed)
+            {
+                chaseSpeed = hunterSpeed;
+            }
+            else
+            {
+                chaseSpeed = playerSpeed;
+            }
+        }
+        else
+        {
+            chaseSpeed = hunterSpeed;
+        }
+
+        MoveTo(player.position, chaseSpeed);
+        Debug.Log("xxxDistance: " + dist);
     }
 
     void AttackState()

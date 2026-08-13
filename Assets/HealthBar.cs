@@ -13,8 +13,9 @@ public class HealthBar : MonoBehaviour
     public static int life = 3;
 
     // Посилання на об'єкт гравця
-    private Control player;
-
+    private GameObject player;
+    private Control control;
+    private Control3 control3;
     void Start()
     {
         Debug.Log("Скрипт HealthBar прикріплений до: " + gameObject.name);
@@ -28,10 +29,19 @@ public class HealthBar : MonoBehaviour
         UpdateLifeText();
 
         // Знайти об'єкт гравця
-        player = FindObjectOfType<Control>();
+        player = GameObject.Find("BoberTop");
+
         if (player == null)
         {
-            Debug.LogError("PlayerController не знайдено в сцені!");
+            Debug.LogError("Об'єкт Player не знайдено в сцені!");
+            return;
+        }
+
+        control = player.GetComponent<Control>();
+        control3 = player.GetComponent<Control3>();
+        if (control == null && control3 == null)
+        {
+            Debug.LogError("На Player немає ні Control, ні Control3!");
         }
     }
 
@@ -50,7 +60,16 @@ public class HealthBar : MonoBehaviour
         if (life > 1)
         {
             StartCoroutine(HandleGameOver());
-            player.enabled = false;
+
+            if (control != null)
+            {
+                control.enabled = false;
+            }
+
+            if (control3 != null)
+            {
+                control3.enabled = false;
+            }
         }
 
         else
@@ -118,10 +137,14 @@ public class HealthBar : MonoBehaviour
         PlayerPrefs.Save();
         GlobalResources.Firewood = 0;
 
-        if (player != null)
+        if (control != null)
         {
-            player.TriggerGameOver(); // Виклик логіки програшу
+            control.TriggerGameOver();
         }
 
+        if (control3 != null)
+        {
+            control3.TriggerGameOver();
+        }
     }
 }

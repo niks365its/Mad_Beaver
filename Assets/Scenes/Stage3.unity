@@ -1740,11 +1740,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a40d7418c8ece843a0f9bf2b0d649c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chaseSpeed: 5
-  attackRange: 0.3
+  hunterSpeed: 5
+  attackRange: 0.5
   attackCooldown: 2
   bulletSpeed: 15
   onPlayerDamage: 10
+  maxDist: 8
   firePoint: {fileID: 1522392146}
   detectionPoint: {fileID: 952328262}
   projectile: {fileID: 8562039220202044337, guid: 665eec8108c726e4c8be63931bdeb65d, type: 3}
@@ -4342,6 +4343,22 @@ PrefabInstance:
     - target: {fileID: 6264548855196158330, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6622024938183942164, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
+      propertyPath: m_Size.y
+      value: 10.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6622024938183942164, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6622024938183942164, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
+      propertyPath: m_Offset.x
+      value: 2.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 6622024938183942164, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 6853990012656786580, guid: 81e7be6326db12f42b9c13ff5ab3c8de, type: 3}
       propertyPath: m_IsActive
@@ -9760,7 +9777,7 @@ Transform:
   m_GameObject: {fileID: 952328261}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.841, y: 0, z: 0}
+  m_LocalPosition: {x: 2.641, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
