@@ -154,6 +154,15 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CarMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""9a90ff40-c78d-4d97-81ff-d3275309f83d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -475,6 +484,61 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""action"": ""Throw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""dcda7549-3309-4423-8997-1cc0ef675680"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CarMove"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""cc2a58f5-0833-45f9-93f3-9744b098292b"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CarMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""98880610-4e1e-4dfb-b15b-b0c8a0ae5f89"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CarMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1a734216-025e-4c0f-a195-002ca76cccbe"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CarMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""ea99e1e0-c069-48b8-990c-a5669a0eaeb4"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CarMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -1006,6 +1070,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
         m_player_AngleJump = m_player.FindAction("AngleJump", throwIfNotFound: true);
         m_player_Throw = m_player.FindAction("Throw", throwIfNotFound: true);
         m_player_Exit = m_player.FindAction("Exit", throwIfNotFound: true);
+        m_player_CarMove = m_player.FindAction("CarMove", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1106,6 +1171,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
     private readonly InputAction m_player_AngleJump;
     private readonly InputAction m_player_Throw;
     private readonly InputAction m_player_Exit;
+    private readonly InputAction m_player_CarMove;
     /// <summary>
     /// Provides access to input actions defined in input action map "player".
     /// </summary>
@@ -1145,6 +1211,10 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "player/Exit".
         /// </summary>
         public InputAction @Exit => m_Wrapper.m_player_Exit;
+        /// <summary>
+        /// Provides access to the underlying input action "player/CarMove".
+        /// </summary>
+        public InputAction @CarMove => m_Wrapper.m_player_CarMove;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1192,6 +1262,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Exit.started += instance.OnExit;
             @Exit.performed += instance.OnExit;
             @Exit.canceled += instance.OnExit;
+            @CarMove.started += instance.OnCarMove;
+            @CarMove.performed += instance.OnCarMove;
+            @CarMove.canceled += instance.OnCarMove;
         }
 
         /// <summary>
@@ -1224,6 +1297,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Exit.started -= instance.OnExit;
             @Exit.performed -= instance.OnExit;
             @Exit.canceled -= instance.OnExit;
+            @CarMove.started -= instance.OnCarMove;
+            @CarMove.performed -= instance.OnCarMove;
+            @CarMove.canceled -= instance.OnCarMove;
         }
 
         /// <summary>
@@ -1508,6 +1584,13 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnExit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CarMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCarMove(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
