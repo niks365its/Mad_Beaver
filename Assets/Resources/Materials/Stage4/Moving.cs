@@ -58,8 +58,13 @@ public class Moving : MonoBehaviour
     {
         beaverMove = context.ReadValue<Vector2>();
         isWalking = beaverMove != Vector2.zero;
-        animator.SetBool("IsGo", isWalking);
+
         animator.SetBool("IsJump", false);
+
+        animator.SetBool("IsGo", isWalking && beaverMove.y > 0);
+
+        // Рух назад → Mirror
+        animator.SetBool("IsGoBack", isWalking && beaverMove.y < 0);
     }
 
     public void onJump(InputAction.CallbackContext context)
@@ -83,6 +88,7 @@ public class Moving : MonoBehaviour
         //  bool isWalking = beaverMove != Vector2.zero;
         animator.SetBool("IsJump", true);
         animator.SetBool("IsGo", false);
+        animator.SetBool("IsGoBack", false);
 
         // audioSource.Stop();
         // audioSource.PlayOneShot(jumpSound);
@@ -113,5 +119,6 @@ public class Moving : MonoBehaviour
         animator.SetBool("IsJump", false);
         isJumping = false;
         animator.SetBool("IsGo", isWalking);
+        animator.SetBool("IsGoBack", isWalking);
     }
 }
