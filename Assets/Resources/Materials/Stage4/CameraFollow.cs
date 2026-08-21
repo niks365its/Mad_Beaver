@@ -1,22 +1,10 @@
-// using UnityEngine;
-
-// public class CameraFollow : MonoBehaviour
-// {
-//     public Transform target;
-//     public Vector3 offset;
-
-//     void LateUpdate()
-//     {
-//         transform.position = target.position + offset;
-//     }
-// }
-
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;
     public Vector3 offset;
+    public float high = 1.5f;
 
     [Header("Rotation")]
     public float rotationSmoothTime = 0.4f;
@@ -50,6 +38,7 @@ public class CameraFollow : MonoBehaviour
         transform.position = newPosition;
 
         // Камера дивиться на бобра
-        transform.LookAt(target);
+        //transform.LookAt(target);
+        transform.LookAt(target.position + Vector3.up * high);
     }
 }
