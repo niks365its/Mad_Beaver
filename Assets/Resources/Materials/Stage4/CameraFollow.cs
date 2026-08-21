@@ -18,26 +18,23 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
     public Vector3 offset;
 
-    [Header("Camera Rotation")]
-    public float rotationSmoothTime = 0.3f;
+    [Header("Rotation")]
+    public float rotationSmoothTime = 0.4f;
 
     private float currentY;
     private float rotationVelocity;
 
     void Start()
     {
-        currentY = transform.eulerAngles.y;
+        currentY = target.eulerAngles.y;
     }
 
     void LateUpdate()
     {
-        // Камера слідує за бобром
-        transform.position = target.position + offset;
-
         // Напрямок бобра
-        float targetY = target.eulerAngles.y;
+        float targetY = target.eulerAngles.y - 90f;
 
-        // Плавне довертання камери із запізненням
+        // Плавно наздоганяємо поворот бобра
         currentY = Mathf.SmoothDampAngle(
             currentY,
             targetY,
@@ -45,11 +42,14 @@ public class CameraFollow : MonoBehaviour
             rotationSmoothTime
         );
 
-        // Зберігаємо X і Z камери
-        transform.rotation = Quaternion.Euler(
-            transform.eulerAngles.x,
-            currentY,
-            transform.eulerAngles.z
-        );
+        // Повертаємо offset навколо бобра
+        Quaternion rotation = Quaternion.Euler(0f, currentY, 0f);
+
+        Vector3 newPosition = target.position + rotation * offset;
+
+        transform.position = newPosition;
+
+        // Камера дивиться на бобра
+        transform.LookAt(target);
     }
 }
