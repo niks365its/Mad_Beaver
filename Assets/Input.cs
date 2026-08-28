@@ -150,7 +150,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""name"": ""Exit"",
                     ""type"": ""Button"",
                     ""id"": ""a2e94789-7aef-439d-8102-144fc597aee9"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false

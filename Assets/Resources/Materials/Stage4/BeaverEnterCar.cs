@@ -8,6 +8,10 @@ public class BeaverEnterCar : MonoBehaviour
     public Transform EnterPoint;
     public Transform Beaver;
 
+    public GameObject avto;
+
+    public Animator animator;
+
     public GameObject doorShineObject;
 
     private Input input;
@@ -17,6 +21,10 @@ public class BeaverEnterCar : MonoBehaviour
 
     private bool beaverInArea = false;
     private bool isMoving = false;
+
+    private bool inAvto = false;
+
+
 
 
 
@@ -42,9 +50,14 @@ public class BeaverEnterCar : MonoBehaviour
     {
         Debug.Log("Throw натиснуто");
 
-        if (beaverInArea && !isMoving)
+        if (beaverInArea && !isMoving && !inAvto)
         {
             StartCoroutine(MoveBeaverToEnterPoint());
+        }
+
+        if (beaverInArea && !isMoving && inAvto)
+        {
+            StartCoroutine(MoveBeaverFromAvto());
         }
     }
 
@@ -52,7 +65,7 @@ public class BeaverEnterCar : MonoBehaviour
     {
         Debug.Log("У SenseArea увійшов: " + other.name);
 
-        if (other.transform.root == Beaver)
+        if (other.transform.root == Beaver.root)
         {
             beaverInArea = true;
             Debug.Log("БОБЕР УВІЙШОВ У SENSE AREA");
@@ -67,18 +80,22 @@ public class BeaverEnterCar : MonoBehaviour
     {
         Debug.Log("Із SenseArea вийшов: " + other.name);
 
-        if (other.transform.root == Beaver)
+        if (other.transform.root == Beaver.root)
         {
             beaverInArea = false;
             Debug.Log("БОБЕР ВИЙШОВ ІЗ SENSE AREA");
+
+            doorShineObject.SetActive(false);
         }
 
-        doorShineObject.SetActive(false);
+
     }
 
     private IEnumerator MoveBeaverToEnterPoint()
     {
         isMoving = true;
+
+        Beaver.GetComponent<Moving>().enabled = false;
 
         Vector3 startPosition = Beaver.position;
         Vector3 targetPosition = EnterPoint.position;
@@ -109,13 +126,13 @@ public class BeaverEnterCar : MonoBehaviour
                 targetPosition,
                 t
             );
-
+            animator.SetBool("IsGo", true);
             // Ніс дивиться в напрямку руху
             Beaver.rotation = moveRotation;
 
             yield return null;
         }
-
+        doorShineObject.SetActive(false);
         // Точно ставимо в EnterPoint
         Beaver.position = targetPosition;
 
@@ -142,9 +159,48 @@ public class BeaverEnterCar : MonoBehaviour
         // Фінальне положення
         Beaver.position = targetPosition;
         Beaver.rotation = targetRotation;
+        animator.SetBool("IsGo", false);
 
+
+        animator.SetBool("IsSitToCar", true);
+
+        avto.GetComponent<MovingCar>().enabled = true;
+
+        CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
+
+        if (cameraFollow != null)
+        {
+            cameraFollow.target = avto.transform;
+        }
+
+        Beaver.SetParent(avto.transform, true);
+        inAvto = true;
+        isMoving = false;
+        yield return new WaitForSeconds(3f);
+        animator.SetBool("IsSitToCar", false);
+        Debug.Log("Бобер доїхав до EnterPoint і повернувся у потрібне положення");
+    }
+
+    private IEnumerator MoveBeaverFromAvto()
+    {
+        isMoving = true;
+        avto.GetComponent<MovingCar>().enabled = false;
+
+        animator.SetBool("IsOutOfCar", true);
+
+        yield return new WaitForSeconds(3f);
+
+        Beaver.SetParent(avto.transform, false);
+        CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
+
+        if (cameraFollow != null)
+        {
+            cameraFollow.target = Beaver;
+        }
+        Beaver.GetComponent<Moving>().enabled = true;
+        inAvto = false;
         isMoving = false;
 
-        Debug.Log("Бобер доїхав до EnterPoint і повернувся у потрібне положення");
+        animator.SetBool("IsOutOfCar", false);
     }
 }

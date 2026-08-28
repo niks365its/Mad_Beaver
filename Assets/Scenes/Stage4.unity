@@ -2116,7 +2116,7 @@ Transform:
   m_Children:
   - {fileID: 865757536}
   m_Father: {fileID: 1392578713}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -87.71526, y: -3.4283206, z: 5.258911}
 --- !u!1 &299029200
 GameObject:
   m_ObjectHideFlags: 0
@@ -6600,6 +6600,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Avto: {fileID: 919132148067667386}
+  AnimDoor: {fileID: 0}
+  BaseDoor: {fileID: 0}
   speed: 5
   rotationSpeed: 100
   jumpForce: 8
@@ -8087,7 +8089,7 @@ Transform:
   m_GameObject: {fileID: 1463607780}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -1.2955437, y: 1.0144475, z: -4.2647095}
+  m_LocalPosition: {x: -1.2955437, y: 0.92, z: -4.2647095}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9596,7 +9598,7 @@ Transform:
   m_Children:
   - {fileID: 290697024}
   m_Father: {fileID: 464840964}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -22.666187, y: -0.16732414, z: -179.56578}
 --- !u!1 &1594787709
 GameObject:
   m_ObjectHideFlags: 0
@@ -10594,6 +10596,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Avto: {fileID: 1672525702}
+  AnimDoor: {fileID: 1463607780}
+  BaseDoor: {fileID: 3460180710068576283}
   speed: 5
   rotationSpeed: 100
   jumpForce: 8
@@ -10606,12 +10610,12 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1672525702}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 10ba3f9f51a108742ae15f23a90abc9e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -10739,6 +10743,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnterPoint: {fileID: 1796467605}
   Beaver: {fileID: 1672525706}
+  avto: {fileID: 919132148668680559}
+  animator: {fileID: 1672525705}
   doorShineObject: {fileID: 2056847985}
   moveDuration: 3
 --- !u!1 &1680051207
@@ -14508,6 +14514,7 @@ GameObject:
   - component: {fileID: 5673320763049530995}
   - component: {fileID: 2901070849649912254}
   - component: {fileID: 1317834380711563678}
+  - component: {fileID: 5673320763049530996}
   m_Layer: 0
   m_Name: DoorLeft
   m_TagString: Untagged
@@ -14950,6 +14957,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 275832658370865886}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5673320763049530996
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020577002508983350}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3079511812392895539, guid: 8298734dca73497488932ece199558ef, type: 3}
 --- !u!4 &5704881705670837963
 Transform:
   m_ObjectHideFlags: 0

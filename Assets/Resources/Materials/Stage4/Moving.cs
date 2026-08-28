@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class Moving : MonoBehaviour
 {
     private Input input;
     public GameObject Avto;
+    public GameObject AnimDoor;
+    public GameObject BaseDoor;
+
     public float speed = 5f;
     public float rotationSpeed = 100f;
 
@@ -120,5 +124,17 @@ public class Moving : MonoBehaviour
         isJumping = false;
         animator.SetBool("IsGo", isWalking);
         animator.SetBool("IsGoBack", isWalking);
+    }
+
+    public void DoorAnimOn()
+    {
+        BaseDoor.SetActive(false);
+        AnimDoor.SetActive(true);
+    }
+
+    public void DoorAnimOff()
+    {
+        BaseDoor.SetActive(true);
+        AnimDoor.SetActive(false);
     }
 }
