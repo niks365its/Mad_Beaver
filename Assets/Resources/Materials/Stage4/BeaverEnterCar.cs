@@ -8,6 +8,8 @@ public class BeaverEnterCar : MonoBehaviour
     public Transform EnterPoint;
     public Transform Beaver;
 
+    public GameObject doorShineObject;
+
     private Input input;
 
     [Header("Налаштування")]
@@ -16,11 +18,14 @@ public class BeaverEnterCar : MonoBehaviour
     private bool beaverInArea = false;
     private bool isMoving = false;
 
+
+
     private void Awake()
     {
         input = new Input();
 
         input.player.Throw.performed += moveToPoint;
+
     }
 
     private void OnEnable()
@@ -51,6 +56,10 @@ public class BeaverEnterCar : MonoBehaviour
         {
             beaverInArea = true;
             Debug.Log("БОБЕР УВІЙШОВ У SENSE AREA");
+
+
+            doorShineObject.SetActive(true);
+
         }
     }
 
@@ -63,6 +72,8 @@ public class BeaverEnterCar : MonoBehaviour
             beaverInArea = false;
             Debug.Log("БОБЕР ВИЙШОВ ІЗ SENSE AREA");
         }
+
+        doorShineObject.SetActive(false);
     }
 
     private IEnumerator MoveBeaverToEnterPoint()
