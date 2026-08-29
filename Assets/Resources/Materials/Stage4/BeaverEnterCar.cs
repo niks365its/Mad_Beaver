@@ -19,13 +19,13 @@ public class BeaverEnterCar : MonoBehaviour
     [Header("Налаштування")]
     public float moveDuration = 1.0f;
 
-    private bool beaverInArea = false;
-    private bool isMoving = false;
+    public bool beaverInArea = false;
+    public bool isMoving = false;
 
-    private bool inAvto = false;
+    public bool inAvto = false;
 
 
-
+    private Coroutine blinkCoroutine;
 
 
     private void Awake()
@@ -33,6 +33,8 @@ public class BeaverEnterCar : MonoBehaviour
         input = new Input();
 
         input.player.Throw.performed += moveToPoint;
+
+
 
     }
 
@@ -50,12 +52,14 @@ public class BeaverEnterCar : MonoBehaviour
     {
         Debug.Log("Throw натиснуто");
 
-        if (beaverInArea && !isMoving && !inAvto)
+        if (!beaverInArea || isMoving) return;
+
+        if (!inAvto)
         {
             StartCoroutine(MoveBeaverToEnterPoint());
         }
 
-        if (beaverInArea && !isMoving && inAvto)
+        else //(beaverInArea && !isMoving && inAvto)
         {
             StartCoroutine(MoveBeaverFromAvto());
         }
@@ -71,7 +75,11 @@ public class BeaverEnterCar : MonoBehaviour
             Debug.Log("БОБЕР УВІЙШОВ У SENSE AREA");
 
 
-            doorShineObject.SetActive(true);
+            // doorShineObject.SetActive(true);
+            if (blinkCoroutine == null)
+            {
+                blinkCoroutine = StartCoroutine(BlinkDoorShine());
+            }
 
         }
     }
@@ -85,7 +93,14 @@ public class BeaverEnterCar : MonoBehaviour
             beaverInArea = false;
             Debug.Log("БОБЕР ВИЙШОВ ІЗ SENSE AREA");
 
-            doorShineObject.SetActive(false);
+            //  doorShineObject.SetActive(false);
+
+            if (blinkCoroutine != null)
+            {
+                StopCoroutine(blinkCoroutine);
+                blinkCoroutine = null;
+                doorShineObject.SetActive(false);
+            }
         }
 
 
@@ -93,8 +108,9 @@ public class BeaverEnterCar : MonoBehaviour
 
     private IEnumerator MoveBeaverToEnterPoint()
     {
+        Debug.Log("Sit Animation, isMoving =  " + isMoving + " inAvto = " + inAvto + "beaverInArea " + beaverInArea);
         isMoving = true;
-
+        inAvto = false;
         Beaver.GetComponent<Moving>().enabled = false;
 
         Vector3 startPosition = Beaver.position;
@@ -113,58 +129,94 @@ public class BeaverEnterCar : MonoBehaviour
         // 80% часу — рух до EnterPoint
         float moveDurationPart = moveDuration * 0.8f;
 
-        while (time < moveDurationPart)
+        //doorShineObject.SetActive(false);
+
+        if (blinkCoroutine != null)
         {
-            time += Time.deltaTime;
-
-            float t = Mathf.Clamp01(time / moveDurationPart);
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            // Рух
-            Beaver.position = Vector3.Lerp(
-                startPosition,
-                targetPosition,
-                t
-            );
-            animator.SetBool("IsGo", true);
-            // Ніс дивиться в напрямку руху
-            Beaver.rotation = moveRotation;
-
-            yield return null;
-        }
-        doorShineObject.SetActive(false);
-        // Точно ставимо в EnterPoint
-        Beaver.position = targetPosition;
-
-        // 20% часу — довертання на місці
-        float rotateTime = 0f;
-        float rotateDuration = moveDuration * 0.2f;
-
-        while (rotateTime < rotateDuration)
-        {
-            rotateTime += Time.deltaTime;
-
-            float t = Mathf.Clamp01(rotateTime / rotateDuration);
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            Beaver.rotation = Quaternion.Slerp(
-                moveRotation,
-                targetRotation,
-                t
-            );
-
-            yield return null;
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+            doorShineObject.SetActive(false);
         }
 
-        // Фінальне положення
-        Beaver.position = targetPosition;
-        Beaver.rotation = targetRotation;
+        if (Vector3.Distance(startPosition, targetPosition) > 0.5f)
+        {
+            Debug.Log("Go Animation, isMoving =  " + isMoving + " inAvto = " + inAvto + "beaverInArea " + beaverInArea);
+            while (time < moveDurationPart)
+            {
+                time += Time.deltaTime;
+
+                float t = Mathf.Clamp01(time / moveDurationPart);
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                // Рух
+                Beaver.position = Vector3.Lerp(
+                    startPosition,
+                    targetPosition,
+                    t
+                );
+                animator.SetBool("IsGo", true);
+                // Ніс дивиться в напрямку руху
+                Beaver.rotation = moveRotation;
+
+                yield return null;
+            }
+
+
+            // Точно ставимо в EnterPoint
+            Beaver.position = targetPosition;
+
+            // 20% часу — довертання на місці
+            float rotateTime = 0f;
+            float rotateDuration = moveDuration * 0.2f;
+
+            while (rotateTime < rotateDuration)
+            {
+                rotateTime += Time.deltaTime;
+
+                float t = Mathf.Clamp01(rotateTime / rotateDuration);
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                Beaver.rotation = Quaternion.Slerp(
+                    moveRotation,
+                    targetRotation,
+                    t
+                );
+
+                yield return null;
+            }
+
+            // Фінальне положення
+            Beaver.position = targetPosition;
+            Beaver.rotation = targetRotation;
+
+        }
+
         animator.SetBool("IsGo", false);
 
-
+        animator.SetBool("IsOutOfCar", false);
         animator.SetBool("IsSitToCar", true);
 
-        avto.GetComponent<MovingCar>().enabled = true;
+
+
+        Rigidbody rb = Beaver.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.detectCollisions = false;
+        }
+
+        Transform beaverCollider = Beaver.Find("Colliders");
+        if (beaverCollider != null)
+        {
+            beaverCollider.gameObject.SetActive(false);
+        }
+
+        Beaver.SetParent(avto.transform, true);
+        inAvto = true;
+
+        yield return new WaitForSeconds(3f);
+
 
         CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
 
@@ -173,34 +225,64 @@ public class BeaverEnterCar : MonoBehaviour
             cameraFollow.target = avto.transform;
         }
 
-        Beaver.SetParent(avto.transform, true);
-        inAvto = true;
-        isMoving = false;
-        yield return new WaitForSeconds(3f);
+        avto.GetComponent<MovingCar>().enabled = true;
         animator.SetBool("IsSitToCar", false);
+        isMoving = false;
+        beaverInArea = true;
         Debug.Log("Бобер доїхав до EnterPoint і повернувся у потрібне положення");
     }
 
     private IEnumerator MoveBeaverFromAvto()
     {
+        Debug.Log("Out Animation, isMoving =  " + isMoving + " inAvto = " + inAvto + "beaverInArea " + beaverInArea);
         isMoving = true;
-        avto.GetComponent<MovingCar>().enabled = false;
 
-        animator.SetBool("IsOutOfCar", true);
-
-        yield return new WaitForSeconds(3f);
-
-        Beaver.SetParent(avto.transform, false);
         CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
-
         if (cameraFollow != null)
         {
             cameraFollow.target = Beaver;
         }
+
+        avto.GetComponent<MovingCar>().enabled = false;
+
+        animator.SetBool("IsOutOfCar", true);
+
+
+
+        yield return new WaitForSeconds(3f);
+
+        Beaver.SetParent(null, true);
+
         Beaver.GetComponent<Moving>().enabled = true;
         inAvto = false;
         isMoving = false;
 
         animator.SetBool("IsOutOfCar", false);
+
+        Transform beaverCollider = Beaver.Find("Colliders");
+        if (beaverCollider != null)
+        {
+            beaverCollider.gameObject.SetActive(true);
+        }
+
+        Rigidbody rb = Beaver.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.detectCollisions = true;
+            rb.isKinematic = false;
+        }
+    }
+
+    private IEnumerator BlinkDoorShine()
+    {
+        while (true)
+        {
+            doorShineObject.SetActive(true);
+            yield return new WaitForSeconds(0.5f);
+
+            doorShineObject.SetActive(false);
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }
