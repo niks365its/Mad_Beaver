@@ -1,40 +1,44 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 public class MovingCar : MonoBehaviour
 {
     private Input input;
-    public GameObject Avto;
-    private Rigidbody rb;
-    public Transform FrontLeftPivot;
-    public Transform FrontRightPivot;
 
     public Transform FrontLeftWheel;
     public Transform FrontRightWheel;
     public Transform RearWheel;
 
-    public float wheelRadius = 0.35f;
 
+    public WheelCollider FrontLeftWheelCollider;
+    public WheelCollider FrontRightWheelCollider;
+    public WheelCollider RearLeftWheelCollider;
+    public WheelCollider RearRightWheelCollider;
+
+    public float motorTorque = 1500f;
     public float maxSteerAngle = 30f;
-    public float force = 500f;
-    public float rotationSpeed = 100f;
+
+    [Header("Гальма")]
+    public float brakeTorque = 3000f;
+    public float idleBrakeTorque = 100f;
+
+    public float massCenter = 0f;
+
     private Vector2 CarMove;
+    private bool isBraking = false;
 
-    // public Animator animator;
-
-    private bool isMove = false;
-
-
+    private Rigidbody rb;
 
     void Awake()
-
     {
         input = new Input();
-
         input.player.CarMove.performed += moveCar;
         input.player.CarMove.canceled += moveCar;
-        rb = Avto.GetComponent<Rigidbody>();
+        input.player.Brake.performed += brakeCar;
+        input.player.Brake.canceled += brakeCar;
+
+        rb = GetComponent<Rigidbody>();
+        rb.centerOfMass = new Vector3(0f, massCenter, 0f);
     }
 
     void OnEnable()
@@ -49,59 +53,88 @@ public class MovingCar : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 movement = Avto.transform.forward * -CarMove.y * force * 1000;
-        rb.AddForce(movement, ForceMode.Force);
+        float motor = isBraking ? 0f : -CarMove.y * motorTorque;
 
-        if (CarMove.y != 0)
-        {
-            float rotation = CarMove.x * rotationSpeed * Time.fixedDeltaTime;
-            Quaternion deltaRotation = Quaternion.Euler(0f, rotation, 0f);
-            rb.MoveRotation(rb.rotation * deltaRotation);
-        }
+        FrontLeftWheelCollider.motorTorque = motor;
+        FrontRightWheelCollider.motorTorque = motor;
+
+        float steer = CarMove.x * maxSteerAngle;
+
+        FrontLeftWheelCollider.steerAngle = steer;
+        FrontRightWheelCollider.steerAngle = steer;
+
+        ApplyBrakes();
+    }
+
+    void LateUpdate()
+    {
+        UpdateWheelVisual(FrontLeftWheelCollider, FrontLeftWheel);
+        UpdateWheelVisual(FrontRightWheelCollider, FrontRightWheel);
+        UpdateWheelVisual(RearLeftWheelCollider, RearWheel);
     }
 
     void Update()
     {
-        Debug.Log(CarMove);
-        // Avto.transform.Translate(Vector3.forward * -CarMove.y * force * Time.deltaTime);
 
-        // if (CarMove.y != 0)
-        // {
-        //     Avto.transform.Rotate(Vector3.up * CarMove.x * rotationSpeed * Time.deltaTime);
-        // }
+    }
 
-        float steer = CarMove.x * maxSteerAngle;
-
-        if (CarMove.y < 0)
+    void UpdateWheelVisual(WheelCollider collider, Transform wheel)
+    {
+        collider.GetWorldPose(out Vector3 position, out Quaternion rotation);
+        if (wheel != RearWheel)
         {
-            steer = -steer;
+            wheel.position = position;
         }
-
-        FrontLeftPivot.localRotation =
-            Quaternion.Euler(0f, steer, 0f);
-
-        FrontRightPivot.localRotation =
-            Quaternion.Euler(0f, steer, 0f);
-
-        float distance = CarMove.y * force * Time.deltaTime;
-        float wheelAngle = (distance / (2f * Mathf.PI * wheelRadius)) * 360f;
-
-        FrontLeftWheel.Rotate(Vector3.right, wheelAngle);
-        FrontRightWheel.Rotate(Vector3.right, wheelAngle);
-        RearWheel.Rotate(Vector3.right, wheelAngle);
+        wheel.rotation = rotation;
     }
 
     private void moveCar(InputAction.CallbackContext context)
     {
         CarMove = context.ReadValue<Vector2>();
-        isMove = CarMove != Vector2.zero;
-
-
-
-        // animator.SetBool("IsGo", isMove && CarMove.y > 0);
-
-        // Рух назад → Mirror
-        //animator.SetBool("IsGoBack", isMove && CarMove.y < 0);
     }
 
+    void ApplyBrakes()
+    {
+
+        float brake = 0f;
+        Debug.Log("Brake = " + brake + " | FL = " + FrontLeftWheelCollider.brakeTorque);
+
+        if (isBraking)
+        {
+            brake = brakeTorque;
+        }
+        else if (Mathf.Abs(CarMove.y) < 0.01f)
+        {
+            brake = idleBrakeTorque;
+        }
+
+        FrontLeftWheelCollider.brakeTorque = brake;
+        FrontRightWheelCollider.brakeTorque = brake;
+        RearLeftWheelCollider.brakeTorque = brake;
+        RearRightWheelCollider.brakeTorque = brake;
+    }
+
+    private void brakeCar(InputAction.CallbackContext context)
+    {
+        isBraking = context.ReadValueAsButton();
+
+        Debug.Log("Is braking = " + isBraking);
+    }
+
+    void OnDrawGizmos()
+    {
+
+
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+
+        if (rigidbody == null)
+            return;
+
+        Vector3 centerOfMassWorld = transform.TransformPoint(rigidbody.centerOfMass);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(centerOfMassWorld, 0.1f);
+
+        Gizmos.DrawLine(centerOfMassWorld, centerOfMassWorld + Vector3.up * 0.5f);
+    }
 }
