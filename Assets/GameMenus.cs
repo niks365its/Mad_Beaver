@@ -9,6 +9,7 @@ public class GameMenus : MonoBehaviour
     private Input menuInput;
     public GameObject exitMenu;
     public GameObject Player;
+    public GameObject Avto;
     public GameObject LevelMenu;
     public GameObject SettingsMenu;
 
@@ -143,11 +144,13 @@ public class GameMenus : MonoBehaviour
         {
             exitMenu.SetActive(true);
             Player.SetActive(false);
+            Avto.SetActive(false);
         }
         else
         {
             exitMenu.SetActive(false);
             Player.SetActive(true);
+            Avto.SetActive(true);
         }
     }
 
@@ -156,6 +159,7 @@ public class GameMenus : MonoBehaviour
     {
         exitMenu.SetActive(false);
         Player.SetActive(true);
+        Avto.SetActive(true);
     }
 
     public void LevelSelect()
