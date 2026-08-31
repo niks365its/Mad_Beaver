@@ -38,7 +38,7 @@ public class MovingCar : MonoBehaviour
         input.player.Brake.canceled += brakeCar;
 
         rb = GetComponent<Rigidbody>();
-        rb.centerOfMass = new Vector3(0f, massCenter, 0f);
+        // rb.centerOfMass = new Vector3(0f, massCenter, 0f);
     }
 
     void OnEnable()
@@ -65,7 +65,7 @@ public class MovingCar : MonoBehaviour
         FrontLeftWheelCollider.steerAngle = steer;
         FrontRightWheelCollider.steerAngle = steer;
 
-
+        rb.centerOfMass = new Vector3(0f, massCenter, 0f);
 
         if (CarMove.y < -0.2f)
         {
