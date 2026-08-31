@@ -44,11 +44,13 @@ public class MovingCar : MonoBehaviour
     void OnEnable()
     {
         input.Enable();
+        LightControl.Instance.SetFrontLight(true);
     }
 
     void OnDisable()
     {
         input.Disable();
+        LightControl.Instance.SetFrontLight(false);
     }
 
     void FixedUpdate()
@@ -62,6 +64,31 @@ public class MovingCar : MonoBehaviour
 
         FrontLeftWheelCollider.steerAngle = steer;
         FrontRightWheelCollider.steerAngle = steer;
+
+
+
+        if (CarMove.y < -0.2f)
+        {
+            LightControl.Instance.SetRearGearLight(true);
+        }
+        else
+        {
+            LightControl.Instance.SetRearGearLight(false);
+        }
+
+        if (CarMove.x > 0.2f)
+        {
+            LightControl.Instance.StartRightBlink();
+        }
+        else if (CarMove.x < -0.2f)
+        {
+            LightControl.Instance.StartLeftBlink();
+        }
+        else
+        {
+            LightControl.Instance.StopRightBlink();
+            LightControl.Instance.StopLeftBlink();
+        }
 
         ApplyBrakes();
     }
@@ -102,10 +129,16 @@ public class MovingCar : MonoBehaviour
         if (isBraking)
         {
             brake = brakeTorque;
+            LightControl.Instance.SetBrakeLight(true);
         }
         else if (Mathf.Abs(CarMove.y) < 0.01f)
         {
             brake = idleBrakeTorque;
+            LightControl.Instance.SetBrakeLight(false);
+        }
+        else
+        {
+            LightControl.Instance.SetBrakeLight(false);
         }
 
         FrontLeftWheelCollider.brakeTorque = brake;

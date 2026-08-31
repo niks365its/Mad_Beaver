@@ -212,12 +212,12 @@ public class BeaverEnterCar : MonoBehaviour
             beaverCollider.gameObject.SetActive(false);
         }
 
-        Beaver.SetParent(avto.transform, true);
+
         inAvto = true;
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
 
-
+        Beaver.SetParent(avto.transform, true);
         CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
 
         if (cameraFollow != null)
