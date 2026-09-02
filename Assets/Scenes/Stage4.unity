@@ -5186,9 +5186,11 @@ MonoBehaviour:
   RearRightWheelCollider: {fileID: 121035141}
   motorTorque: 5000
   maxSteerAngle: 30
-  brakeTorque: 10000
-  idleBrakeTorque: 2000
+  brakeTorque: 200
+  idleBrakeTorque: 30
   massCenter: -1.5
+  frontWheelDrive: 1
+  rearWheelDrive: 0
 --- !u!1 &1020998258
 GameObject:
   m_ObjectHideFlags: 0
@@ -6404,7 +6406,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.06, y: 1.26, z: 1.89}
-  m_Center: {x: -2.79, y: -0.77, z: -4.13}
+  m_Center: {x: -3.12, y: -0.77, z: -4.13}
 --- !u!65 &1173853875
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6425,7 +6427,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.06, y: 1.26, z: 1.89}
-  m_Center: {x: 2.79, y: -0.77, z: -4.13}
+  m_Center: {x: 3.12, y: -0.77, z: -4.13}
 --- !u!65 &1173853876
 BoxCollider:
   m_ObjectHideFlags: 0

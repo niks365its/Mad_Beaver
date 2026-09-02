@@ -24,8 +24,13 @@ public class MovingCar : MonoBehaviour
 
     public float massCenter = 0f;
 
+    public bool frontWheelDrive = true;
+    public bool rearWheelDrive = false;
+
     private Vector2 CarMove;
     private bool isBraking = false;
+    private bool isBrakingPressed = false;
+    private float forwardSpeed;
 
     private Rigidbody rb;
 
@@ -55,10 +60,47 @@ public class MovingCar : MonoBehaviour
 
     void FixedUpdate()
     {
-        float motor = isBraking ? 0f : -CarMove.y * motorTorque;
+        float motor = 0f;
+        float input = -CarMove.y;
+        forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
 
-        FrontLeftWheelCollider.motorTorque = motor;
-        FrontRightWheelCollider.motorTorque = motor;
+
+        bool isReverseBrake = Mathf.Abs(forwardSpeed) > 0.1f && Mathf.Sign(input) != Mathf.Sign(forwardSpeed) && input != 0f;
+
+        if (isReverseBrake)
+        {
+            motor = 0f;
+
+        }
+        else
+        {
+            motor = input * motorTorque;
+
+        }
+
+        isBraking = isBrakingPressed || isReverseBrake;
+
+        ApplyBrakes();
+
+        if (frontWheelDrive)
+        {
+            FrontLeftWheelCollider.motorTorque = motor;
+            FrontRightWheelCollider.motorTorque = motor;
+        }
+        else if (rearWheelDrive)
+        {
+            RearLeftWheelCollider.motorTorque = motor;
+            RearRightWheelCollider.motorTorque = motor;
+        }
+
+        else if (frontWheelDrive && rearWheelDrive)
+        {
+            float doubleTorque = motorTorque * 0.5f;
+            FrontLeftWheelCollider.motorTorque = doubleTorque;
+            FrontRightWheelCollider.motorTorque = doubleTorque;
+            RearLeftWheelCollider.motorTorque = doubleTorque;
+            RearRightWheelCollider.motorTorque = doubleTorque;
+        }
 
         float steer = CarMove.x * maxSteerAngle;
 
@@ -90,7 +132,7 @@ public class MovingCar : MonoBehaviour
             LightControl.Instance.StopLeftBlink();
         }
 
-        ApplyBrakes();
+
     }
 
     void LateUpdate()
@@ -124,23 +166,24 @@ public class MovingCar : MonoBehaviour
     {
 
         float brake = 0f;
-        Debug.Log("Brake = " + brake + " | FL = " + FrontLeftWheelCollider.brakeTorque);
+
 
         if (isBraking)
         {
-            brake = brakeTorque;
+            // Debug.Log("Brake = " + brake + " | FL = " + FrontLeftWheelCollider.brakeTorque + "Speed " + Mathf.Abs(forwardSpeed));
+            brake = brakeTorque * Mathf.Abs(forwardSpeed);
             LightControl.Instance.SetBrakeLight(true);
         }
         else if (Mathf.Abs(CarMove.y) < 0.01f)
         {
-            brake = idleBrakeTorque;
+            brake = idleBrakeTorque * Mathf.Abs(forwardSpeed);
             LightControl.Instance.SetBrakeLight(false);
         }
         else
         {
             LightControl.Instance.SetBrakeLight(false);
         }
-
+        //   Debug.Log("FL Brake = " + brake);
         FrontLeftWheelCollider.brakeTorque = brake;
         FrontRightWheelCollider.brakeTorque = brake;
         RearLeftWheelCollider.brakeTorque = brake;
@@ -149,9 +192,9 @@ public class MovingCar : MonoBehaviour
 
     private void brakeCar(InputAction.CallbackContext context)
     {
-        isBraking = context.ReadValueAsButton();
+        isBrakingPressed = context.ReadValueAsButton();
 
-        Debug.Log("Is braking = " + isBraking);
+        // Debug.Log("Is braking = " + isBraking);
     }
 
     void OnDrawGizmos()
