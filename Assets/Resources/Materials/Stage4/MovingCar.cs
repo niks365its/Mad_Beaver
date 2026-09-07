@@ -64,7 +64,6 @@ public class MovingCar : MonoBehaviour
         float input = -CarMove.y;
         forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
 
-
         bool isReverseBrake = Mathf.Abs(forwardSpeed) > 0.1f && Mathf.Sign(input) != Mathf.Sign(forwardSpeed) && input != 0f;
 
         if (isReverseBrake)
@@ -74,7 +73,14 @@ public class MovingCar : MonoBehaviour
         }
         else
         {
-            motor = input * motorTorque;
+            float currentTorque = motorTorque;
+
+            if (input > 0f)
+            {
+                currentTorque /= 4f;
+            }
+            Debug.Log("Input is " + input + " Power is " + currentTorque);
+            motor = input * currentTorque;
 
         }
 

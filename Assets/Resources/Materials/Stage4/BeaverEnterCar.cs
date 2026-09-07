@@ -4,7 +4,7 @@ using System.Collections;
 
 public class BeaverEnterCar : MonoBehaviour
 {
-    [Header("Об'єкти")]
+    [Header("Objects")]
     public Transform EnterPoint;
     public Transform Beaver;
 
@@ -12,12 +12,13 @@ public class BeaverEnterCar : MonoBehaviour
 
     public Animator animator;
 
-    public GameObject doorShineObject;
+    public GameObject pointerObject;
 
     private Input input;
 
-    [Header("Налаштування")]
+    [Header("Settings")]
     public float moveDuration = 1.0f;
+    //public float pointerBlinkTime = 1f;
 
     public bool beaverInArea = false;
     public bool isMoving = false;
@@ -25,7 +26,7 @@ public class BeaverEnterCar : MonoBehaviour
     public bool inAvto = false;
 
 
-    private Coroutine blinkCoroutine;
+    //private Coroutine blinkCoroutine;
 
 
     private void Awake()
@@ -75,11 +76,11 @@ public class BeaverEnterCar : MonoBehaviour
             Debug.Log("БОБЕР УВІЙШОВ У SENSE AREA");
 
 
-            // doorShineObject.SetActive(true);
-            if (blinkCoroutine == null)
-            {
-                blinkCoroutine = StartCoroutine(BlinkDoorShine());
-            }
+            pointerObject.SetActive(true);
+            // if (blinkCoroutine == null)
+            // {
+            //     blinkCoroutine = StartCoroutine(BlinkDoorShine());
+            // }
 
         }
     }
@@ -93,14 +94,14 @@ public class BeaverEnterCar : MonoBehaviour
             beaverInArea = false;
             Debug.Log("БОБЕР ВИЙШОВ ІЗ SENSE AREA");
 
-            //  doorShineObject.SetActive(false);
+            pointerObject.SetActive(false);
 
-            if (blinkCoroutine != null)
-            {
-                StopCoroutine(blinkCoroutine);
-                blinkCoroutine = null;
-                doorShineObject.SetActive(false);
-            }
+            // if (blinkCoroutine != null)
+            // {
+            //     StopCoroutine(blinkCoroutine);
+            //     blinkCoroutine = null;
+            //     pointerObject.SetActive(false);
+            // }
         }
 
 
@@ -129,14 +130,14 @@ public class BeaverEnterCar : MonoBehaviour
         // 80% часу — рух до EnterPoint
         float moveDurationPart = moveDuration * 0.8f;
 
-        //doorShineObject.SetActive(false);
+        pointerObject.SetActive(false);
 
-        if (blinkCoroutine != null)
-        {
-            StopCoroutine(blinkCoroutine);
-            blinkCoroutine = null;
-            doorShineObject.SetActive(false);
-        }
+        // if (blinkCoroutine != null)
+        // {
+        //     StopCoroutine(blinkCoroutine);
+        //     blinkCoroutine = null;
+        //     pointerObject.SetActive(false);
+        // }
 
         if (Vector3.Distance(startPosition, targetPosition) > 0.5f)
         {
@@ -274,15 +275,15 @@ public class BeaverEnterCar : MonoBehaviour
         }
     }
 
-    private IEnumerator BlinkDoorShine()
-    {
-        while (true)
-        {
-            doorShineObject.SetActive(true);
-            yield return new WaitForSeconds(0.5f);
+    // private IEnumerator BlinkDoorShine()
+    // {
+    //     while (true)
+    //     {
+    //         pointerObject.SetActive(true);
+    //         yield return new WaitForSeconds(pointerBlinkTime);
 
-            doorShineObject.SetActive(false);
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
+    //         pointerObject.SetActive(false);
+    //         yield return new WaitForSeconds(pointerBlinkTime);
+    //     }
+    // }
 }
