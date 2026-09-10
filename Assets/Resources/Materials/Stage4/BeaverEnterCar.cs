@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.AI;
 
 public class BeaverEnterCar : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class BeaverEnterCar : MonoBehaviour
     public GameObject pointerObject;
 
     private Input input;
+    private NavMeshAgent agent;
 
     [Header("Settings")]
     public float moveDuration = 1.0f;
@@ -33,10 +35,11 @@ public class BeaverEnterCar : MonoBehaviour
     {
         input = new Input();
 
-        input.player.Throw.performed += moveToPoint;
+        input.player.EnterCar.performed += moveToPoint;
 
-
-
+        agent = Beaver.GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.enabled = false;
     }
 
     private void OnEnable()
@@ -109,95 +112,51 @@ public class BeaverEnterCar : MonoBehaviour
 
     private IEnumerator MoveBeaverToEnterPoint()
     {
-        Debug.Log("Sit Animation, isMoving =  " + isMoving + " inAvto = " + inAvto + "beaverInArea " + beaverInArea);
+        Debug.Log("Sit Animation, isMoving = " + isMoving + " inAvto = " + inAvto + " beaverInArea " + beaverInArea);
+
         isMoving = true;
         inAvto = false;
+
         Beaver.GetComponent<Moving>().enabled = false;
-
-        Vector3 startPosition = Beaver.position;
-        Vector3 targetPosition = EnterPoint.position;
-
-        Quaternion targetRotation = EnterPoint.rotation;
-
-        float time = 0f;
-
-        // Напрямок руху до EnterPoint
-        Vector3 moveDirection = (targetPosition - startPosition).normalized;
-
-        // Поворот, щоб ніс бобра дивився в напрямку руху
-        Quaternion moveRotation = Quaternion.LookRotation(moveDirection, Vector3.up) * Quaternion.Euler(0f, 180f, 0f);
-
-        // 80% часу — рух до EnterPoint
-        float moveDurationPart = moveDuration * 0.8f;
 
         pointerObject.SetActive(false);
 
-        // if (blinkCoroutine != null)
-        // {
-        //     StopCoroutine(blinkCoroutine);
-        //     blinkCoroutine = null;
-        //     pointerObject.SetActive(false);
-        // }
+        agent.enabled = true;
+        agent.isStopped = false;
+        agent.SetDestination(EnterPoint.position);
 
-        if (Vector3.Distance(startPosition, targetPosition) > 0.5f)
+        animator.SetBool("IsGo", true);
+
+        while (agent.pathPending)
         {
-            Debug.Log("Go Animation, isMoving =  " + isMoving + " inAvto = " + inAvto + "beaverInArea " + beaverInArea);
-            while (time < moveDurationPart)
-            {
-                time += Time.deltaTime;
-
-                float t = Mathf.Clamp01(time / moveDurationPart);
-                t = Mathf.SmoothStep(0f, 1f, t);
-
-                // Рух
-                Beaver.position = Vector3.Lerp(
-                    startPosition,
-                    targetPosition,
-                    t
-                );
-                animator.SetBool("IsGo", true);
-                // Ніс дивиться в напрямку руху
-                Beaver.rotation = moveRotation;
-
-                yield return null;
-            }
-
-
-            // Точно ставимо в EnterPoint
-            Beaver.position = targetPosition;
-
-            // 20% часу — довертання на місці
-            float rotateTime = 0f;
-            float rotateDuration = moveDuration * 0.2f;
-
-            while (rotateTime < rotateDuration)
-            {
-                rotateTime += Time.deltaTime;
-
-                float t = Mathf.Clamp01(rotateTime / rotateDuration);
-                t = Mathf.SmoothStep(0f, 1f, t);
-
-                Beaver.rotation = Quaternion.Slerp(
-                    moveRotation,
-                    targetRotation,
-                    t
-                );
-
-                yield return null;
-            }
-
-            // Фінальне положення
-            Beaver.position = targetPosition;
-            Beaver.rotation = targetRotation;
-
+            yield return null;
         }
 
+        while (agent.remainingDistance > agent.stoppingDistance)
+        {
+            Vector3 direction = agent.steeringTarget - Beaver.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up) * Quaternion.Euler(0f, 180f, 0f);
+                Beaver.rotation = Quaternion.Slerp(Beaver.rotation, targetRotation, 10f * Time.deltaTime);
+            }
+
+            yield return null;
+        }
+
+        agent.isStopped = true;
+
         animator.SetBool("IsGo", false);
+
+        Beaver.position = EnterPoint.position;
+        Beaver.rotation = EnterPoint.rotation;
 
         animator.SetBool("IsOutOfCar", false);
         animator.SetBool("IsSitToCar", true);
 
-
+        agent.enabled = false;
 
         Rigidbody rb = Beaver.GetComponent<Rigidbody>();
 
@@ -208,17 +167,18 @@ public class BeaverEnterCar : MonoBehaviour
         }
 
         Transform beaverCollider = Beaver.Find("Colliders");
+
         if (beaverCollider != null)
         {
             beaverCollider.gameObject.SetActive(false);
         }
-
 
         inAvto = true;
 
         yield return new WaitForSeconds(5f);
 
         Beaver.SetParent(avto.transform, true);
+
         CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
 
         if (cameraFollow != null)
@@ -227,9 +187,12 @@ public class BeaverEnterCar : MonoBehaviour
         }
 
         avto.GetComponent<MovingCar>().enabled = true;
+
         animator.SetBool("IsSitToCar", false);
+
         isMoving = false;
         beaverInArea = true;
+
         Debug.Log("Бобер доїхав до EnterPoint і повернувся у потрібне положення");
     }
 

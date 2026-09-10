@@ -86,6 +86,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "EnterCar",
+                    "type": "Button",
+                    "id": "be11604a-d72f-4400-b6fe-f95a0fb5a926",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -256,8 +265,8 @@
                 },
                 {
                     "name": "",
-                    "id": "cc22371e-943c-4cb1-89ff-b469ac1dcd1c",
-                    "path": "<Keyboard>/e",
+                    "id": "392cd139-12e5-4d58-9d09-aa3a40d6641f",
+                    "path": "<Keyboard>/5",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -267,8 +276,8 @@
                 },
                 {
                     "name": "",
-                    "id": "392cd139-12e5-4d58-9d09-aa3a40d6641f",
-                    "path": "<Keyboard>/5",
+                    "id": "8845c848-b9c7-464a-8412-4970c3f2ea6d",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -306,6 +315,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Brake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3d63e496-6e3a-4af2-b102-4c54b9b7d378",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EnterCar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -172,6 +172,15 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EnterCar"",
+                    ""type"": ""Button"",
+                    ""id"": ""be11604a-d72f-4400-b6fe-f95a0fb5a926"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -342,8 +351,8 @@ public partial class @Input: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cc22371e-943c-4cb1-89ff-b469ac1dcd1c"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""id"": ""392cd139-12e5-4d58-9d09-aa3a40d6641f"",
+                    ""path"": ""<Keyboard>/5"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -353,8 +362,8 @@ public partial class @Input: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""392cd139-12e5-4d58-9d09-aa3a40d6641f"",
-                    ""path"": ""<Keyboard>/5"",
+                    ""id"": ""8845c848-b9c7-464a-8412-4970c3f2ea6d"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -392,6 +401,17 @@ public partial class @Input: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Brake"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3d63e496-6e3a-4af2-b102-4c54b9b7d378"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EnterCar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1092,6 +1112,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
         m_player_Exit = m_player.FindAction("Exit", throwIfNotFound: true);
         m_player_CarMove = m_player.FindAction("CarMove", throwIfNotFound: true);
         m_player_Brake = m_player.FindAction("Brake", throwIfNotFound: true);
+        m_player_EnterCar = m_player.FindAction("EnterCar", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1194,6 +1215,7 @@ public partial class @Input: IInputActionCollection2, IDisposable
     private readonly InputAction m_player_Exit;
     private readonly InputAction m_player_CarMove;
     private readonly InputAction m_player_Brake;
+    private readonly InputAction m_player_EnterCar;
     /// <summary>
     /// Provides access to input actions defined in input action map "player".
     /// </summary>
@@ -1241,6 +1263,10 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "player/Brake".
         /// </summary>
         public InputAction @Brake => m_Wrapper.m_player_Brake;
+        /// <summary>
+        /// Provides access to the underlying input action "player/EnterCar".
+        /// </summary>
+        public InputAction @EnterCar => m_Wrapper.m_player_EnterCar;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1294,6 +1320,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Brake.started += instance.OnBrake;
             @Brake.performed += instance.OnBrake;
             @Brake.canceled += instance.OnBrake;
+            @EnterCar.started += instance.OnEnterCar;
+            @EnterCar.performed += instance.OnEnterCar;
+            @EnterCar.canceled += instance.OnEnterCar;
         }
 
         /// <summary>
@@ -1332,6 +1361,9 @@ public partial class @Input: IInputActionCollection2, IDisposable
             @Brake.started -= instance.OnBrake;
             @Brake.performed -= instance.OnBrake;
             @Brake.canceled -= instance.OnBrake;
+            @EnterCar.started -= instance.OnEnterCar;
+            @EnterCar.performed -= instance.OnEnterCar;
+            @EnterCar.canceled -= instance.OnEnterCar;
         }
 
         /// <summary>
@@ -1630,6 +1662,13 @@ public partial class @Input: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBrake(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EnterCar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEnterCar(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

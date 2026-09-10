@@ -75,6 +75,8 @@ public class MovingCar : MonoBehaviour
         input.Disable();
         LightControl.Instance.SetFrontLight(false);
         Smoke.Stop();
+        RearLeftMud.Stop();
+        RearRightMud.Stop();
     }
 
     void FixedUpdate()

@@ -1,23 +1,33 @@
+
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Moving : MonoBehaviour
 {
-    private Input input;
+    [Header("Objects")]
     public GameObject Avto;
     public GameObject AnimDoor;
     public GameObject BaseDoor;
+    public Animator animator;
+    public Text firewoodText;
+    public GameObject stickPrefab; // Префаб камінчика
 
+    [Header("Parameters")]
     public float speed = 5f;
     public float rotationSpeed = 100f;
 
     public float jumpForce = 30f;
+    public Transform throwPoint;  // Точка, з якої кидатиметься камінчик
+    public float throwForce = 10f; // Сила кидка
+    public float upForce = 2f;
+
     private Vector2 beaverMove;
-
-    public Animator animator;
-
+    private Input input;
     private Rigidbody rb;
 
     private bool isJumping = false;
@@ -31,6 +41,7 @@ public class Moving : MonoBehaviour
         input.player.CarMove.performed += moveBeaver;
         input.player.CarMove.canceled += moveBeaver;
         input.player.AngleJump.performed += onJump;
+        input.player.Throw.performed += stickFly;
 
         rb = GetComponent<Rigidbody>();
     }
@@ -87,8 +98,6 @@ public class Moving : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
 
-        //rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-
         //  bool isWalking = beaverMove != Vector2.zero;
         animator.SetBool("IsJump", true);
         animator.SetBool("IsGo", false);
@@ -124,6 +133,50 @@ public class Moving : MonoBehaviour
         isJumping = false;
         animator.SetBool("IsGo", isWalking);
         animator.SetBool("IsGoBack", isWalking);
+    }
+
+    public void stickFly(InputAction.CallbackContext context)
+    {
+        float lastThrowTime = 0f;
+        float throwCooldown = 0.3f;
+
+        // StartCoroutine(ThrowAnimation());
+        if (GlobalResources.Firewood > 0)
+        {
+            //  audioSource.PlayOneShot(hitSound);
+            if (Time.time - lastThrowTime < throwCooldown)
+                return; // Якщо ще не минуло 0.5 секунди, виходимо
+
+            lastThrowTime = Time.time; // Оновлюємо час останнього кидка
+            // animator.SetBool("IsThrow", true);
+
+            // Створюємо stick у точці кидка
+            GameObject stick = Instantiate(stickPrefab, throwPoint.position, throwPoint.rotation);
+            Rigidbody rb = stick.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                rb.linearVelocity = transform.forward * -throwForce + Vector3.up * upForce;
+
+                GlobalResources.Firewood -= 1;
+                firewoodText.text = "" + GlobalResources.Firewood;
+
+                //  SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
+            }
+        }
+        else
+        {
+            firewoodText.text = "X";
+            //  audioSource.PlayOneShot(hitFailSound);
+            //            SoundManager.Instance.PlayOneShot(SoundManager.Instance.emptyStickSound);
+        }
+    }
+
+    public IEnumerator ThrowAnimation()
+    {
+        animator.SetBool("IsThrow", true);
+        yield return new WaitForSeconds(0.1f);
+        animator.SetBool("IsThrow", false);
     }
 
     public void DoorAnimOn()

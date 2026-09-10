@@ -41,6 +41,20 @@ public class Firewood : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // hintAnimator.SetBool("IsHintExit", true);
+            // StartCoroutine(FollowTarget());
+            GlobalResources.Firewood += addSum;
+            firewoodText.text = "" + GlobalResources.Firewood;
+            //audioSource.PlayOneShot(woodAddSound);
+            //   SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
+            // Destroy(gameObject, SoundManager.Instance.woodGetSound.length);
+        }
+    }
+
     private IEnumerator FollowTarget()
     {
         isFollowing = true;
