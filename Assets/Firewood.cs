@@ -25,6 +25,8 @@ public class Firewood : MonoBehaviour
 
     private bool isFollowing = false;
 
+    private bool isCollected = false;
+
     private void Start()
     {
         firewoodText.text = "" + GlobalResources.Firewood;
@@ -32,39 +34,45 @@ public class Firewood : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            hintAnimator.SetBool("IsHintExit", true);
-            StartCoroutine(FollowTarget());
-            GlobalResources.Firewood += addSum;
-            firewoodText.text = "" + GlobalResources.Firewood;
-            //audioSource.PlayOneShot(woodAddSound);
-            SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
-            Destroy(gameObject, SoundManager.Instance.woodGetSound.length);
-        }
+        if (isCollected || !other.CompareTag("Player"))
+            return;
+
+        isCollected = true;
+
+        hintAnimator.SetBool("IsHintExit", true);
+        StartCoroutine(FollowTarget());
+        GlobalResources.Firewood += addSum;
+        firewoodText.text = "" + GlobalResources.Firewood;
+        //audioSource.PlayOneShot(woodAddSound);
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
+        Destroy(gameObject, SoundManager.Instance.woodGetSound.length);
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (isCollected || !other.CompareTag("Player"))
+            return;
+
+        isCollected = true;
+
+        // hintAnimator.SetBool("IsHintExit", true);
+        StartCoroutine(FollowTarget());
+        GlobalResources.Firewood += addSum;
+        Debug.Log(" Sticks " + addSum);
+
+
+        if (script != null)
         {
-            // hintAnimator.SetBool("IsHintExit", true);
-            StartCoroutine(FollowTarget());
-            GlobalResources.Firewood += addSum;
-            Debug.Log(" Sticks " + addSum);
-
-
-            if (script != null)
-            {
-                script.SetAddSum(addSum);
-                Debug.Log(" Sticks send" + addSum);
-            }
-
-            firewoodText.text = "" + GlobalResources.Firewood;
-            //audioSource.PlayOneShot(woodAddSound);
-            //   SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
-
+            script.SetAddSum(addSum);
+            Debug.Log(" Sticks send" + addSum);
         }
+
+        firewoodText.text = "" + GlobalResources.Firewood;
+        //audioSource.PlayOneShot(woodAddSound);
+        //   SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
+
+
     }
 
     private IEnumerator FollowTarget()

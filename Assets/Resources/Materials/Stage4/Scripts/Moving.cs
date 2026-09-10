@@ -39,13 +39,19 @@ public class Moving : MonoBehaviour
     private float throwCooldown = 0.3f;
 
     private float perOne;
+    private float allSum;
 
     private int addSum;
+
+    private float calcSum;
 
     public void SetAddSum(int value)
     {
         addSum = value;
-        perOne = (float)addSum / sticks.Length;
+        allSum = addSum + calcSum;
+        perOne = (float)allSum / sticks.Length;
+
+        Debug.Log("xxx Sticks rest  " + calcSum + " perOne  " + perOne + " allSum  " + allSum);
 
         for (int i = 0; i < sticks.Length; i++)
         {
@@ -184,25 +190,25 @@ public class Moving : MonoBehaviour
 
                 firewoodText.text = "" + GlobalResources.Firewood;
 
-                addSum -= 1;
+                allSum -= 1;
 
                 Debug.Log(" Sticks rest  " + addSum);
                 Debug.Log(" Sticks rest  " + addSum + " sticks.Length  " + sticks.Length);
 
 
-                if (addSum % perOne == 0)
+
+
+                int activeCount = Mathf.CeilToInt(allSum / perOne);
+
+                for (int i = sticks.Length - 1; i >= 0; i--)
                 {
-                    for (int i = sticks.Length - 1; i >= 0; i--)
+                    if (sticks[i] != null)
                     {
-                        if (sticks[i] != null && sticks[i].activeSelf)
-                        {
-                            sticks[i].SetActive(false);
-                            break;
-                        }
+                        sticks[i].SetActive(i < activeCount);
                     }
-                    Debug.Log("xxx Sticks rest  " + addSum + " perOne  " + perOne + " addSum % perOne  " + addSum % perOne);
                 }
 
+                calcSum = allSum;
                 //  SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
             }
         }
