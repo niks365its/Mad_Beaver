@@ -17,7 +17,7 @@ public class Firewood : MonoBehaviour
     public Transform objectToMove;
     public Transform target;
 
-    public GameObject SticksInBag;
+    //  public GameObject SticksInBag;
 
     public float speed = 5f;
 
@@ -89,7 +89,7 @@ public class Firewood : MonoBehaviour
 
             yield return null;
         }
-        SticksInBag.SetActive(true);
+        // SticksInBag.SetActive(true);
         isFollowing = false;
         Destroy(gameObject);    //, SoundManager.Instance.woodGetSound.length);
     }

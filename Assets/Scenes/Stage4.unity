@@ -1836,6 +1836,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2124,6 +2128,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2811,6 +2819,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4180,6 +4192,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4426,6 +4442,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10937,6 +10957,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11322,6 +11346,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14922,7 +14950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1469810615
 Transform:
   m_ObjectHideFlags: 0
@@ -15483,6 +15511,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22026,6 +22058,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -28455,6 +28491,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
       propertyPath: m_Name
       value: Stick (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cffca40c744d534cb011df4ba3966db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

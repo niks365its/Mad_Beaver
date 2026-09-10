@@ -46,8 +46,14 @@ public class Moving : MonoBehaviour
     {
         addSum = value;
         perOne = (float)addSum / sticks.Length;
-        Debug.Log(" Sticks rest  " + addSum + " perOne  " + perOne + " addSum % perOne  " + addSum % perOne);
-        Debug.Log(" Sticks added  " + addSum);
+
+        for (int i = 0; i < sticks.Length; i++)
+        {
+            if (sticks[i] != null)
+            {
+                sticks[i].SetActive(true);
+            }
+        }
     }
 
     void Awake()
