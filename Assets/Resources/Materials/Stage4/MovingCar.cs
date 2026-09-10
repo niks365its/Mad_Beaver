@@ -5,6 +5,7 @@ public class MovingCar : MonoBehaviour
 {
     private Input input;
 
+    [Header("Objects")]
     public Transform FrontLeftWheel;
     public Transform FrontRightWheel;
     public Transform RearWheel;
@@ -15,17 +16,16 @@ public class MovingCar : MonoBehaviour
     public WheelCollider RearLeftWheelCollider;
     public WheelCollider RearRightWheelCollider;
 
+    [Header("Motor settings")]
     public float motorTorque = 1500f;
     public float maxSteerAngle = 30f;
-
-    [Header("Гальма")]
-    public float brakeTorque = 3000f;
-    public float idleBrakeTorque = 100f;
-
-    public float massCenter = 0f;
-
     public bool frontWheelDrive = true;
     public bool rearWheelDrive = false;
+    public float massCenter = 0f;
+
+    [Header("Brake settings")]
+    public float brakeTorque = 3000f;
+    public float idleBrakeTorque = 100f;
 
     private Vector2 CarMove;
     private bool isBraking = false;
@@ -33,6 +33,21 @@ public class MovingCar : MonoBehaviour
     private float forwardSpeed;
 
     private Rigidbody rb;
+
+    [Header("Mud and Smoke settings")]
+    // public ParticleSystem FrontLeftMud;
+    // public ParticleSystem FrontRightMud;
+    public ParticleSystem RearLeftMud;
+    public ParticleSystem RearRightMud;
+    public ParticleSystem Smoke;
+
+    public float mudMinSpeed = 1f;
+    public float mudMaxSpeed = 10f;
+    public float mudMinSlip = 0.2f;
+    public float mudMaxSlip = 1.5f;
+
+    public float smokeMinSlip = 0.2f;
+    public float smokeMaxSlip = 1.5f;
 
     void Awake()
     {
@@ -50,12 +65,16 @@ public class MovingCar : MonoBehaviour
     {
         input.Enable();
         LightControl.Instance.SetFrontLight(true);
+
+        if (Smoke != null)
+            Smoke.Play();
     }
 
     void OnDisable()
     {
         input.Disable();
         LightControl.Instance.SetFrontLight(false);
+        Smoke.Stop();
     }
 
     void FixedUpdate()
@@ -88,7 +107,16 @@ public class MovingCar : MonoBehaviour
 
         ApplyBrakes();
 
-        if (frontWheelDrive)
+        if (frontWheelDrive && rearWheelDrive)
+        {
+            float doubleTorque = motorTorque * 0.5f;
+            FrontLeftWheelCollider.motorTorque = doubleTorque;
+            FrontRightWheelCollider.motorTorque = doubleTorque;
+            RearLeftWheelCollider.motorTorque = doubleTorque;
+            RearRightWheelCollider.motorTorque = doubleTorque;
+        }
+
+        else if (frontWheelDrive)
         {
             FrontLeftWheelCollider.motorTorque = motor;
             FrontRightWheelCollider.motorTorque = motor;
@@ -97,15 +125,6 @@ public class MovingCar : MonoBehaviour
         {
             RearLeftWheelCollider.motorTorque = motor;
             RearRightWheelCollider.motorTorque = motor;
-        }
-
-        else if (frontWheelDrive && rearWheelDrive)
-        {
-            float doubleTorque = motorTorque * 0.5f;
-            FrontLeftWheelCollider.motorTorque = doubleTorque;
-            FrontRightWheelCollider.motorTorque = doubleTorque;
-            RearLeftWheelCollider.motorTorque = doubleTorque;
-            RearRightWheelCollider.motorTorque = doubleTorque;
         }
 
         float steer = CarMove.x * maxSteerAngle;
@@ -138,7 +157,8 @@ public class MovingCar : MonoBehaviour
             LightControl.Instance.StopLeftBlink();
         }
 
-
+        UpdateMudParticles();
+        UpdateSmokeParticles();
     }
 
     void LateUpdate()
@@ -218,5 +238,76 @@ public class MovingCar : MonoBehaviour
         Gizmos.DrawSphere(centerOfMassWorld, 0.1f);
 
         Gizmos.DrawLine(centerOfMassWorld, centerOfMassWorld + Vector3.up * 0.5f);
+    }
+
+    void UpdateMudParticles()
+    {
+        // UpdateWheelMud(FrontLeftWheelCollider, FrontLeftMud);
+        // UpdateWheelMud(FrontRightWheelCollider, FrontRightMud);
+        UpdateWheelMud(RearLeftWheelCollider, RearLeftMud);
+        UpdateWheelMud(RearRightWheelCollider, RearRightMud);
+
+    }
+
+    void UpdateWheelMud(WheelCollider wheel, ParticleSystem mud)
+    {
+        if (mud == null)
+            return;
+
+        if (!wheel.GetGroundHit(out WheelHit hit))
+        {
+            if (mud.isPlaying)
+                mud.Stop();
+
+            return;
+        }
+
+        float speed = Mathf.Abs(forwardSpeed);
+
+        if (speed < mudMinSpeed)
+        {
+            if (mud.isPlaying)
+                mud.Stop();
+
+            return;
+        }
+
+        float slip = Mathf.Max(Mathf.Abs(hit.forwardSlip), Mathf.Abs(hit.sidewaysSlip));
+
+        float speedAmount = Mathf.InverseLerp(mudMinSpeed, mudMaxSpeed, speed);
+        float slipAmount = Mathf.InverseLerp(mudMinSlip, mudMaxSlip, slip);
+
+        float amount = Mathf.Max(speedAmount, slipAmount);
+
+        var emission = mud.emission;
+        emission.rateOverTime = Mathf.Lerp(2f, 25f, amount);
+
+        if (!mud.isPlaying)
+            mud.Play();
+    }
+
+    private void UpdateSmokeParticles()
+    {
+        UpdateSmoke(RearRightWheelCollider, Smoke);
+    }
+
+    void UpdateSmoke(WheelCollider wheel, ParticleSystem smoke)
+    {
+        if (smoke == null)
+        {
+            return;
+        }
+
+        wheel.GetGroundHit(out WheelHit hit);
+
+        float slip = Mathf.Max(Mathf.Abs(hit.forwardSlip), Mathf.Abs(hit.sidewaysSlip));
+        float amount = Mathf.InverseLerp(smokeMinSlip, smokeMaxSlip, slip);
+
+        var emission = smoke.emission;
+        emission.rateOverTime = Mathf.Lerp(70f, 200f, amount);
+
+        var main = smoke.main;
+        main.simulationSpeed = Mathf.Lerp(0.2f, 1f, amount);
+        main.startLifetime = Mathf.Lerp(0.2f, 0.5f, amount);
     }
 }
