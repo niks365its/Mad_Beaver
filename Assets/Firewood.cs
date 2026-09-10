@@ -8,6 +8,7 @@ public class Firewood : MonoBehaviour
     public Text firewoodText;
     public int addSum = 10;
     public Animator hintAnimator;
+    public Moving script;
 
     // public AudioSource audioSource;
     // public AudioClip woodAddSound;
@@ -15,6 +16,8 @@ public class Firewood : MonoBehaviour
 
     public Transform objectToMove;
     public Transform target;
+
+    public GameObject SticksInBag;
 
     public float speed = 5f;
 
@@ -46,12 +49,21 @@ public class Firewood : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // hintAnimator.SetBool("IsHintExit", true);
-            // StartCoroutine(FollowTarget());
+            StartCoroutine(FollowTarget());
             GlobalResources.Firewood += addSum;
+            Debug.Log(" Sticks " + addSum);
+
+
+            if (script != null)
+            {
+                script.SetAddSum(addSum);
+                Debug.Log(" Sticks send" + addSum);
+            }
+
             firewoodText.text = "" + GlobalResources.Firewood;
             //audioSource.PlayOneShot(woodAddSound);
             //   SoundManager.Instance.PlayOneShot(SoundManager.Instance.woodGetSound);
-            // Destroy(gameObject, SoundManager.Instance.woodGetSound.length);
+
         }
     }
 
@@ -77,8 +89,9 @@ public class Firewood : MonoBehaviour
 
             yield return null;
         }
-
+        SticksInBag.SetActive(true);
         isFollowing = false;
+        Destroy(gameObject);    //, SoundManager.Instance.woodGetSound.length);
     }
 }
 

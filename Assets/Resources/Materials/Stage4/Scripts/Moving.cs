@@ -17,6 +17,8 @@ public class Moving : MonoBehaviour
     public Text firewoodText;
     public GameObject stickPrefab; // Префаб камінчика
 
+    public GameObject[] sticks;
+
     [Header("Parameters")]
     public float speed = 5f;
     public float rotationSpeed = 100f;
@@ -32,6 +34,21 @@ public class Moving : MonoBehaviour
 
     private bool isJumping = false;
     private bool isWalking = false;
+
+    private float lastThrowTime = 0f;
+    private float throwCooldown = 0.3f;
+
+    private float perOne;
+
+    private int addSum;
+
+    public void SetAddSum(int value)
+    {
+        addSum = value;
+        perOne = (float)addSum / sticks.Length;
+        Debug.Log(" Sticks rest  " + addSum + " perOne  " + perOne + " addSum % perOne  " + addSum % perOne);
+        Debug.Log(" Sticks added  " + addSum);
+    }
 
     void Awake()
 
@@ -137,8 +154,7 @@ public class Moving : MonoBehaviour
 
     public void stickFly(InputAction.CallbackContext context)
     {
-        float lastThrowTime = 0f;
-        float throwCooldown = 0.3f;
+
 
         // StartCoroutine(ThrowAnimation());
         if (GlobalResources.Firewood > 0)
@@ -159,7 +175,27 @@ public class Moving : MonoBehaviour
                 rb.linearVelocity = transform.forward * -throwForce + Vector3.up * upForce;
 
                 GlobalResources.Firewood -= 1;
+
                 firewoodText.text = "" + GlobalResources.Firewood;
+
+                addSum -= 1;
+
+                Debug.Log(" Sticks rest  " + addSum);
+                Debug.Log(" Sticks rest  " + addSum + " sticks.Length  " + sticks.Length);
+
+
+                if (addSum % perOne == 0)
+                {
+                    for (int i = sticks.Length - 1; i >= 0; i--)
+                    {
+                        if (sticks[i] != null && sticks[i].activeSelf)
+                        {
+                            sticks[i].SetActive(false);
+                            break;
+                        }
+                    }
+                    Debug.Log("xxx Sticks rest  " + addSum + " perOne  " + perOne + " addSum % perOne  " + addSum % perOne);
+                }
 
                 //  SoundManager.Instance.PlayOneShot(SoundManager.Instance.flyStickSound);
             }
