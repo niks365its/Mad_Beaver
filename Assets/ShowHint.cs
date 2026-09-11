@@ -29,8 +29,11 @@ public class ShowHint : MonoBehaviour
     {
         yield return new WaitForSeconds(2f); // Затримка перед показом
         hint.SetActive(true);
-        SoundManager.Instance.PlayOneShot(SoundManager.Instance.hintSound);
 
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.hintSound);
+        }
         // Позначаємо, що зображення було показано для цієї сцени
         PlayerPrefs.SetInt(hintKey, 1);
         PlayerPrefs.Save();

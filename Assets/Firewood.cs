@@ -40,7 +40,10 @@ public class Firewood : MonoBehaviour
 
         isCollected = true;
 
-        hintAnimator.SetBool("IsHintExit", true);
+        if (hintAnimator != null)
+        {
+            hintAnimator.SetBool("IsHintExit", true);
+        }
         StartCoroutine(FollowTarget());
         GlobalResources.Firewood += addSum;
         firewoodText.text = "" + GlobalResources.Firewood;
@@ -57,7 +60,10 @@ public class Firewood : MonoBehaviour
 
         isCollected = true;
 
-        // hintAnimator.SetBool("IsHintExit", true);
+        if (hintAnimator != null)
+        {
+            hintAnimator.SetBool("IsHintExit", true);
+        }
         StartCoroutine(FollowTarget());
         GlobalResources.Firewood += addSum;
         Debug.Log(" Sticks " + addSum);
