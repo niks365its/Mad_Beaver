@@ -151,6 +151,15 @@ public class BeaverEnterCar : MonoBehaviour
         animator.SetBool("IsGo", false);
 
         Beaver.position = EnterPoint.position;
+
+        while (Quaternion.Angle(Beaver.rotation, EnterPoint.rotation) > 0.5f)
+        {
+            Beaver.position = EnterPoint.position;
+            Beaver.rotation = Quaternion.Slerp(Beaver.rotation, EnterPoint.rotation, 5f * Time.deltaTime);
+            yield return null;
+        }
+
+        Beaver.position = EnterPoint.position;
         Beaver.rotation = EnterPoint.rotation;
 
         animator.SetBool("IsOutOfCar", false);
@@ -175,7 +184,7 @@ public class BeaverEnterCar : MonoBehaviour
 
         inAvto = true;
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
 
         Beaver.SetParent(avto.transform, true);
 

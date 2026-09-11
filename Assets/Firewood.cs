@@ -20,6 +20,7 @@ public class Firewood : MonoBehaviour
     //  public GameObject SticksInBag;
 
     public float speed = 5f;
+    public float rotationSpeed = 100f;
 
     public float stopDistance = 0.05f;
 
@@ -94,6 +95,10 @@ public class Firewood : MonoBehaviour
 
             // Рухаємося вперед
             objectToMove.position += direction * speed * Time.deltaTime;
+
+            Vector3 rotation = objectToMove.eulerAngles;
+            rotation.x = Mathf.MoveTowardsAngle(rotation.x, -80f, rotationSpeed * Time.deltaTime);
+            objectToMove.eulerAngles = rotation;
 
             yield return null;
         }
