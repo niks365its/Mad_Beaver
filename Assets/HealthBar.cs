@@ -16,6 +16,7 @@ public class HealthBar : MonoBehaviour
     private GameObject player;
     private Control control;
     private Control3 control3;
+    private Moving moving;
     void Start()
     {
         Debug.Log("Скрипт HealthBar прикріплений до: " + gameObject.name);
@@ -33,13 +34,20 @@ public class HealthBar : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogError("Об'єкт Player не знайдено в сцені!");
-            return;
+            player = GameObject.Find("Beawer_all");
+
+            if (player == null)
+            {
+                Debug.LogError("Об'єкт Player не знайдено в сцені!");
+                return;
+            }
         }
 
         control = player.GetComponent<Control>();
         control3 = player.GetComponent<Control3>();
-        if (control == null && control3 == null)
+        moving = player.GetComponent<Moving>();
+
+        if (control == null && control3 == null && moving == null)
         {
             Debug.LogError("На Player немає ні Control, ні Control3!");
         }
@@ -69,6 +77,11 @@ public class HealthBar : MonoBehaviour
             if (control3 != null)
             {
                 control3.enabled = false;
+            }
+
+            if (moving != null)
+            {
+                moving.enabled = false;
             }
         }
 
@@ -145,6 +158,10 @@ public class HealthBar : MonoBehaviour
         if (control3 != null)
         {
             control3.TriggerGameOver();
+        }
+        if (moving != null)
+        {
+            moving.TriggerGameOver();
         }
     }
 }

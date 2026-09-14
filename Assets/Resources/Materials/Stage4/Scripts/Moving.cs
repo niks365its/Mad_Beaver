@@ -16,6 +16,8 @@ public class Moving : MonoBehaviour
     public Animator animator;
     public Text firewoodText;
     public GameObject stickPrefab; // Префаб камінчика
+    public GameObject screenController;
+    public GameObject gameOverMenu;
 
     public GameObject[] sticks;
 
@@ -34,6 +36,8 @@ public class Moving : MonoBehaviour
 
     private bool isJumping = false;
     private bool isWalking = false;
+
+    private bool isGameOver = false;
 
     private float lastThrowTime = 0f;
     private float throwCooldown = 0.3f;
@@ -237,5 +241,41 @@ public class Moving : MonoBehaviour
     {
         BaseDoor.SetActive(true);
         AnimDoor.SetActive(false);
+    }
+
+    public void TriggerGameOver()
+    {
+        if (!isGameOver)
+        {
+            screenController.SetActive(false);
+            // SoundManager.Instance.StopEffectsSound();
+            isGameOver = true;
+
+            animator.SetBool("IsSwim", false);
+
+            animator.SetBool("IsDead", true);
+            //SoundManager.Instance.PlayOneShot(SoundManager.Instance.deathSound);
+
+            // Додатково: зупинити рух або інші дії персонажа
+            GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+            // GetComponent<PlayerMovement>().enabled = false; // Якщо є скрипт руху
+
+            // Скидання життів до 3
+            HealthBar.life = 3; // Оновлення статичної змінної
+            StartCoroutine(GameOverMenu());
+        }
+    }
+    public IEnumerator GameOverMenu()
+    {
+        screenController.SetActive(false);
+        yield return new WaitForSeconds(3f);
+        // Зупиняємо звуки
+        SoundManager.Instance.StopEffectsSound();
+        SoundManager.Instance.StopBackgroundSound();
+
+        gameOverMenu.SetActive(true);
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.gameOverSound);
+        gameObject.SetActive(false);
+
     }
 }

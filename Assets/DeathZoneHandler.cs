@@ -31,6 +31,32 @@ public class DeathZoneHandler : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider collision)
+    {
+        if (collision.CompareTag("Player")) // Перевірка, чи це персонаж
+        {
 
+            Debug.Log("Player is fell");
+            // audioSource.PlayOneShot(fallingSound);
+
+
+            Moving player = collision.GetComponentInParent<Moving>();
+
+            Debug.Log("Player is fell " + player);
+            if (player != null)
+            {
+                //  player.TriggerGameOver(); // Виклик анімації програшу
+                player.enabled = false; // Зупиняємо рух або інші дії персонажа
+                Debug.Log("Player is fell " + player.enabled);
+                healthBar.ZeroHealth();
+            }
+
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayOneShot(SoundManager.Instance.fallSound);
+
+            }
+        }
+    }
 
 }
