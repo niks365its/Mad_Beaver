@@ -33743,6 +33743,7 @@ MonoBehaviour:
   isPike: 0
   animator: {fileID: 1916433106}
   bulletSpeed: 5
+  attackDistance: 15
 --- !u!195 &1973956655
 NavMeshAgent:
   m_ObjectHideFlags: 0
