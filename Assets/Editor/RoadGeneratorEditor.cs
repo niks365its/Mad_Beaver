@@ -127,7 +127,7 @@ public class RoadGeneratorEditor : Editor
         EditorGUILayout.Space();
 
         EditorGUILayout.HelpBox(
-            "SHIFT + ЛКМ по Terrain — додати точку дороги.",
+            "SHIFT + ЛКМ по Terrain — додати точки. Після завершення натисніть Generate Road.",
             MessageType.Info
         );
 
@@ -211,9 +211,11 @@ public class RoadGeneratorEditor : Editor
                     {
                         road.points.Add(point);
 
-                        road.GenerateRoad();
+                        // road.GenerateRoad();
 
                         EditorUtility.SetDirty(road);
+
+                        SceneView.RepaintAll();
                     }
 
                     e.Use();

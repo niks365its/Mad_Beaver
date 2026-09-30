@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -42,6 +43,7 @@ public class HunterControl3d : MonoBehaviour
 
     void Start()
     {
+        animator.SetBool("IsHunterWalk", true);
         StartCoroutine(Patrol());
     }
 
@@ -158,6 +160,8 @@ public class HunterControl3d : MonoBehaviour
             player = other.transform;
             isAttacking = true;
             animator.SetBool("IsHunterWalk", false);
+
+            player.transform.parent.GetComponentInParent<NavMeshObstacle>().enabled = true;
         }
     }
 
@@ -170,6 +174,7 @@ public class HunterControl3d : MonoBehaviour
             // agent.isStopped = false;
             //animator.SetBool("IsHunterAttack", false);
             agent.SetDestination(pointB.position);
+            player.transform.parent.GetComponentInParent<NavMeshObstacle>().enabled = false;
         }
     }
     void Attack()
@@ -215,7 +220,7 @@ public class HunterControl3d : MonoBehaviour
         // }
 
         Vector3 direction = player.position - firePoint.position;
-        direction.y = 0f;
+        //  direction.y = 0f;
         direction.Normalize();
 
         GameObject bullet = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(direction));
