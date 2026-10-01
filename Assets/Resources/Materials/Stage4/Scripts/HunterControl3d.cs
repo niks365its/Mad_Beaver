@@ -157,6 +157,7 @@ public class HunterControl3d : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("mmm Contact");
             player = other.transform;
             isAttacking = true;
             animator.SetBool("IsHunterWalk", false);
@@ -205,7 +206,7 @@ public class HunterControl3d : MonoBehaviour
     {
         agent.isStopped = true;
         animator.SetBool("IsHunterWalk", false);
-        animator.enabled = false;
+        //animator.enabled = false;
 
         isTargeting = true;
 
@@ -227,7 +228,7 @@ public class HunterControl3d : MonoBehaviour
         bullet.GetComponent<Rigidbody>().linearVelocity = direction * bulletSpeed;
         yield return new WaitForSeconds(1f);
         isAttacking = false;
-        animator.enabled = true;
+        //  animator.enabled = true;
         agent.isStopped = false;
 
     }
