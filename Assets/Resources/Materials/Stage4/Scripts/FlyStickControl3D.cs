@@ -7,6 +7,7 @@ public class FlyStickControl3D : MonoBehaviour
 {
     public float onPlayerDamage = 10f; // Кількість пошкоджень
     public float onEnemyDamage = 10f; // Кількість пошкоджень
+    public float timeToDestroy = 3f; // Кількість пошкоджень
     public bool isPlayer = true;
     private float cooldownTimer = 0f;
     private float cooldownDuration = 0.3f; // Час між спрацьовуваннями
@@ -21,7 +22,7 @@ public class FlyStickControl3D : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, 1.7f); // Знищення через 5 секунд
+        Destroy(gameObject, timeToDestroy); // Знищення через 5 секунд
     }
 
 
